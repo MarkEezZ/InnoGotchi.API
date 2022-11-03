@@ -12,8 +12,8 @@
     "InnoGotchi.API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchBrowser": false,
+      "launchUrl": "innogotchi",
       "applicationUrl": "https://localhost:7177;http://localhost:5177",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -21,8 +21,8 @@
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchBrowser": false,
+      "launchUrl": "innogotchi",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
