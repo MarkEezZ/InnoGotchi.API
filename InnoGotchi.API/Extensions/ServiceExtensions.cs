@@ -1,4 +1,7 @@
-﻿namespace InnoGotchi.API.InnoGotchi.API.Extentions
+﻿using InnoGotchi.API.Contracts;
+using InnoGotchi.API.LoggerService;
+
+namespace InnoGotchi.API.InnoGotchi.API.Extentions
 {
     public static class ServiceExtensions
     {
@@ -15,5 +18,9 @@
         services.Configure<IISOptions>(options =>
         {
         });
+
+        public static void ConfigureLoggerService(this IServiceCollection services) =>
+        services.AddScoped<ILoggerManager, LoggerManager>();
+
     }
 }
