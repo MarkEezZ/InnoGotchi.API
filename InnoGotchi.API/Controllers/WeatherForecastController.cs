@@ -1,3 +1,4 @@
+using InnoGotchi.API.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
@@ -11,11 +12,20 @@ namespace InnoGotchi.API.Controllers
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private ILoggerManager _logger;
+        public WeatherForecastController(ILoggerManager logger)
         {
             _logger = logger;
+        }
+
+        [HttpGet]
+        public IEnumerable<string> Get123()
+        {
+            _logger.LogInfo("Here is info message from our values controller.");
+            _logger.LogDebug("Here is debug message from our values controller.");
+            _logger.LogWarn("Here is warn message from our values controller.");
+            _logger.LogError("Here is an error message from our values controller.");
+            return new string[] { "value1", "value2" };
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
