@@ -154,18 +154,11 @@ namespace InnoGotchi.API.Migrations
                     Age = table.Column<int>(type: "int", nullable: false),
                     LastEntry = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastExit = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnFarm = table.Column<int>(type: "int", nullable: false),
                     SettingsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_Farms_OwnFarm",
-                        column: x => x.OwnFarm,
-                        principalTable: "Farms",
-                        principalColumn: "FarmId",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Users_Settings_SettingsId",
                         column: x => x.SettingsId,
@@ -200,6 +193,32 @@ namespace InnoGotchi.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Owners",
+                columns: table => new
+                {
+                    OwnersId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FarmId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Owners", x => x.OwnersId);
+                    table.ForeignKey(
+                        name: "FK_Owners_Farms_FarmId",
+                        column: x => x.FarmId,
+                        principalTable: "Farms",
+                        principalColumn: "FarmId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Owners_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Guests_FarmId",
                 table: "Guests",
@@ -208,6 +227,16 @@ namespace InnoGotchi.API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Guests_UserId",
                 table: "Guests",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Owners_FarmId",
+                table: "Owners",
+                column: "FarmId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Owners_UserId",
+                table: "Owners",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -236,11 +265,6 @@ namespace InnoGotchi.API.Migrations
                 column: "NoseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_OwnFarm",
-                table: "Users",
-                column: "OwnFarm");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_SettingsId",
                 table: "Users",
                 column: "SettingsId");
@@ -250,6 +274,9 @@ namespace InnoGotchi.API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Guests");
+
+            migrationBuilder.DropTable(
+                name: "Owners");
 
             migrationBuilder.DropTable(
                 name: "Pets");
@@ -264,13 +291,13 @@ namespace InnoGotchi.API.Migrations
                 name: "Eyes");
 
             migrationBuilder.DropTable(
+                name: "Farms");
+
+            migrationBuilder.DropTable(
                 name: "Mouthes");
 
             migrationBuilder.DropTable(
                 name: "Noses");
-
-            migrationBuilder.DropTable(
-                name: "Farms");
 
             migrationBuilder.DropTable(
                 name: "Settings");

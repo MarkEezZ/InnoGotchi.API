@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics.CodeAnalysis;
 
 namespace InnoGotchi.API.Entities.Models
 {

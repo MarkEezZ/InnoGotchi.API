@@ -33,11 +33,6 @@ namespace InnoGotchi.API.Entities.Models
         public DateTime LastExit { get; set; }
 
 
-        [ForeignKey(nameof(Farm))]
-        public int OwnFarm { get; set; }
-        public Farm Farm { get; set; }
-
-
         [ForeignKey(nameof(Settings))]
         public int SettingsId { get; set; }
         public Settings Settings { get; set; }

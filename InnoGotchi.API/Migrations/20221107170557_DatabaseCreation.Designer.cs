@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20221107115151_DatabaseCreation")]
+    [Migration("20221107170557_DatabaseCreation")]
     partial class DatabaseCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,12 +93,12 @@ namespace InnoGotchi.API.Migrations
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
                 {
-                    b.Property<int>("GuestsId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("GuestsId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GuestsId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("FarmId")
                         .HasColumnType("int");
@@ -106,7 +106,7 @@ namespace InnoGotchi.API.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("GuestsId");
+                    b.HasKey("Id");
 
                     b.HasIndex("FarmId");
 
@@ -161,6 +161,30 @@ namespace InnoGotchi.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Noses");
+                });
+
+            modelBuilder.Entity("InnoGotchi.API.Entities.Models.Owners", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("OwnersId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("FarmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FarmId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Pet", b =>
@@ -261,9 +285,6 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("OwnFarm")
-                        .HasColumnType("int");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -274,14 +295,31 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnFarm");
-
                     b.HasIndex("SettingsId");
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
+                {
+                    b.HasOne("InnoGotchi.API.Entities.Models.Farm", "Farm")
+                        .WithMany()
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InnoGotchi.API.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Farm");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InnoGotchi.API.Entities.Models.Owners", b =>
                 {
                     b.HasOne("InnoGotchi.API.Entities.Models.Farm", "Farm")
                         .WithMany()
@@ -345,19 +383,11 @@ namespace InnoGotchi.API.Migrations
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.User", b =>
                 {
-                    b.HasOne("InnoGotchi.API.Entities.Models.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("OwnFarm")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InnoGotchi.API.Entities.Models.Settings", "Settings")
                         .WithMany()
                         .HasForeignKey("SettingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Farm");
 
                     b.Navigation("Settings");
                 });
