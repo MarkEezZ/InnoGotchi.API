@@ -1,5 +1,7 @@
 ﻿using InnoGotchi.API.Contracts;
+using InnoGotchi.API.Entities;
 using InnoGotchi.API.LoggerService;
+using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchi.API.InnoGotchi.API.Extentions
 {
@@ -21,6 +23,11 @@ namespace InnoGotchi.API.InnoGotchi.API.Extentions
 
         public static void ConfigureLoggerService(this IServiceCollection services) =>
         services.AddScoped<ILoggerManager, LoggerManager>();
+
+        public static void ConfigureSqlContext(this IServiceCollection services,
+            IConfiguration configuration) =>
+                services.AddDbContext<RepositoryContext>(opts =>
+                    opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
     }
 }
