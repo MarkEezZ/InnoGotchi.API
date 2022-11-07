@@ -16,8 +16,5 @@ namespace InnoGotchi.API.Entities.Models
         [Required(ErrorMessage = "A Name field is required.")]
         [MaxLength(50, ErrorMessage = "Maximum length for the Name is 50.")]
         public string Name { get; set; }
-
-        public ICollection<Pet> Pets { get; set; }
-        public ICollection<Guests> Guests { get; set; }
     }
 }
