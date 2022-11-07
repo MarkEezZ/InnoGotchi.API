@@ -16,7 +16,5 @@ namespace InnoGotchi.API.Entities.Models
         public string ActivityStatus { get; set; }
         public bool IsInGame { get; set; }
         public bool IsMusic { get; set; }
-
-        public ICollection<User> Users { get; set; }
     }
 }

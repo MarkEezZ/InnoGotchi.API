@@ -19,7 +19,5 @@ namespace InnoGotchi.API.Entities.Models
         [ForeignKey(nameof(Farm))]
         public int FarmId { get; set; }
         public Farm Farm { get; set; }
-
-        public bool isOwner { get; set; }
     }
 }
