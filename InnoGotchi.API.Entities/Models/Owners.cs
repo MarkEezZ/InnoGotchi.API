@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace InnoGotchi.API.Entities.Models
 {
-    public class Guests
+    public class Owners
     {
-        [Column("GuestsId")]
+        [Column("OwnersId")]
         public int Id { get; set; }
 
         [ForeignKey(nameof(User))]
