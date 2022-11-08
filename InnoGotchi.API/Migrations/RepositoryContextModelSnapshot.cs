@@ -43,7 +43,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bodies");
+                    b.ToTable("Bodies", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Eyes", b =>
@@ -67,7 +67,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Eyes");
+                    b.ToTable("Eyes", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Farm", b =>
@@ -86,7 +86,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Farms");
+                    b.ToTable("Farms", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
@@ -110,7 +110,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Guests");
+                    b.ToTable("Guests", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Mouth", b =>
@@ -134,7 +134,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Mouthes");
+                    b.ToTable("Mouthes", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Nose", b =>
@@ -158,7 +158,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Noses");
+                    b.ToTable("Noses", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Owners", b =>
@@ -182,7 +182,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Owners");
+                    b.ToTable("Owners", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Pet", b =>
@@ -226,7 +226,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("NoseId");
 
-                    b.ToTable("Pets");
+                    b.ToTable("Pets", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Settings", b =>
@@ -252,7 +252,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.User", b =>
@@ -295,7 +295,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("SettingsId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>

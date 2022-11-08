@@ -13,7 +13,6 @@ namespace InnoGotchi.API.Entities.Models
         [Column("SettingsId")]
         public int Id { get; set; }
         public string AvatarFileName { get; set; }
-        public string ActivityStatus { get; set; }
         public bool IsInGame { get; set; }
         public bool IsMusic { get; set; }
     }

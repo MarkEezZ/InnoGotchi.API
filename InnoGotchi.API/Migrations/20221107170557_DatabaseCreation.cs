@@ -85,7 +85,6 @@ namespace InnoGotchi.API.Migrations
                     SettingsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AvatarFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ActivityStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsInGame = table.Column<bool>(type: "bit", nullable: false),
                     IsMusic = table.Column<bool>(type: "bit", nullable: false)
                 },
