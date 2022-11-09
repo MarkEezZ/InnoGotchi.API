@@ -20,5 +20,8 @@ namespace InnoGotchi.API.Entities.Models
         [Required(ErrorMessage = "A FileName field is required.")]
         [MaxLength(100, ErrorMessage = "Maximum length for the FileName is 100.")]
         public string FileName { get; set; }
+
+        [Required(ErrorMessage = "A FileName field is required.")]
+        public string Type { get; set; }
     }
 }

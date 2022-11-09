@@ -41,9 +41,13 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Bodies", (string)null);
+                    b.ToTable("Bodies");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Eyes", b =>
@@ -65,9 +69,13 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Eyes", (string)null);
+                    b.ToTable("Eyes");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Farm", b =>
@@ -86,7 +94,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Farms", (string)null);
+                    b.ToTable("Farms");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
@@ -110,7 +118,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Guests", (string)null);
+                    b.ToTable("Guests");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Mouth", b =>
@@ -132,9 +140,13 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Mouthes", (string)null);
+                    b.ToTable("Mouthes");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Nose", b =>
@@ -156,9 +168,13 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Noses", (string)null);
+                    b.ToTable("Noses");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Owners", b =>
@@ -182,7 +198,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Owners", (string)null);
+                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Pet", b =>
@@ -226,7 +242,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("NoseId");
 
-                    b.ToTable("Pets", (string)null);
+                    b.ToTable("Pets");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Settings", b =>
@@ -237,9 +253,6 @@ namespace InnoGotchi.API.Migrations
                         .HasColumnName("SettingsId");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ActivityStatus")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AvatarFileName")
                         .HasColumnType("nvarchar(max)");
@@ -252,7 +265,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings", (string)null);
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.User", b =>
@@ -295,7 +308,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasIndex("SettingsId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
