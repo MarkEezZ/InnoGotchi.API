@@ -4,6 +4,7 @@ using InnoGotchi.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20221109160836_InitialData")]
+    partial class InitialData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,9 +420,6 @@ namespace InnoGotchi.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
                     b.Property<int>("BodyId")
                         .HasColumnType("int");
 
@@ -459,7 +458,6 @@ namespace InnoGotchi.API.Migrations
                         new
                         {
                             Id = 1,
-                            Age = 0,
                             BodyId = 5,
                             EyesId = 1,
                             FarmId = 1,
@@ -470,12 +468,11 @@ namespace InnoGotchi.API.Migrations
                         new
                         {
                             Id = 2,
-                            Age = 0,
                             BodyId = 8,
                             EyesId = 4,
                             FarmId = 2,
                             MouthId = 3,
-                            Name = "Grossmeister",
+                            Name = "Dungeon Grossmeister",
                             NoseId = 4
                         });
                 });
