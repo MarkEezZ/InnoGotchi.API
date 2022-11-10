@@ -17,6 +17,8 @@ namespace InnoGotchi.API.Entities.Models
         [MaxLength(50, ErrorMessage = "Maximum length for the Name is 50")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "An Age is a required field.")]
+        public int Age { get; set; }
 
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }
