@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\InnoGotchi.API.Entities\InnoGotchi.API.Entities.csproj" />
     <ProjectReference Include="..\InnoGotchi.API.LoggerService\InnoGotchi.API.LoggerService.csproj" />
+    <ProjectReference Include="..\InnoGotchi.API.Repositories\InnoGotchi.API.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
