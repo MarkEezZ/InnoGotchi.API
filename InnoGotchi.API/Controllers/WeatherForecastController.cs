@@ -3,23 +3,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
+    [ApiController]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
 
         private ILoggerManager _logger;
-        public WeatherForecastController(ILoggerManager logger)
+        private IRepositoryManager _repository;
+
+        public WeatherForecastController(ILoggerManager logger, IRepositoryManager repository)
         {
             _logger = logger;
+            _repository = repository;
         }
 
         [HttpGet]
-        public IEnumerable<string> Get123()
+        public IEnumerable<string> Get1()
         {
             _logger.LogInfo("Here is info message from our values controller.");
             _logger.LogDebug("Here is debug message from our values controller.");
@@ -27,6 +30,15 @@ namespace InnoGotchi.API.Controllers
             _logger.LogError("Here is an error message from our values controller.");
             return new string[] { "value1", "value2" };
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<string>> Get2()
+        {
+            //_repository.User.FindAll();
+
+            return new string[] { "value1", "value2" };
+        }
+
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()

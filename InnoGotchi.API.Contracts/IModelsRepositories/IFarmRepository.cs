@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InnoGotchi.API.Contracts
+namespace InnoGotchi.API.Contracts.IModelsRepositories
 {
-    public interface IGuestsRepository
+    public interface IFarmRepository
     {
     }
 }
