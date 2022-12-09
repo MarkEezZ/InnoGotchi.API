@@ -15,5 +15,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
 
         }
+
+        public IEnumerable<Eyes> GetAllEyes(bool trackChanges)
+        {
+            return FindAll(trackChanges).OrderBy(e => e.Name).ToList();
+        }
     }
 }

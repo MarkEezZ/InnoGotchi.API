@@ -17,16 +17,9 @@ namespace InnoGotchi.API.Entities.Configuration
                 new Settings
                 {
                     Id = 1,
-                    AvatarFileName = "ava_1.png",
-                    IsInGame = false,
+                    AvatarFileName = "ava_default.png",
+                    IsInGame = true,
                     IsMusic = true
-                } ,
-                new Settings
-                {
-                    Id = 2,
-                    AvatarFileName = "ava_2.png",
-                    IsInGame = false,
-                    IsMusic = false
                 }
             );
         }

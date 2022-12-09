@@ -15,5 +15,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
 
         }
+
+        public IEnumerable<Mouth> GetAllMouthes(bool trackChanges)
+        {
+            return FindAll(trackChanges).OrderBy(m => m.Name).ToList();
+        }
     }
 }

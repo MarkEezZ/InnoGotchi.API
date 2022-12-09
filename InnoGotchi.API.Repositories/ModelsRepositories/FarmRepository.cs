@@ -15,5 +15,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
 
         }
+
+        public IEnumerable<Farm> GetAllFarms(bool trackChanges)
+        {
+            return FindAll(trackChanges).OrderBy(f => f.Id).ToList();
+        }
     }
 }

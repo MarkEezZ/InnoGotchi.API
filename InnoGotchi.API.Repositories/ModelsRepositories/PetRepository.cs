@@ -15,5 +15,13 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
 
         }
+
+        public IEnumerable<Pet> GetAllUserPets(bool trackChanges, User user)
+        {
+            return FindAll(trackChanges)
+                .Where(p => p.FarmId == user.Id)
+                .OrderBy(p => p.FarmId)
+                .ToList();
+        }
     }
 }

@@ -15,5 +15,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
 
         }
+
+        public IEnumerable<Settings> GetAllSettings(bool trackChanges)
+        {
+            return FindAll(trackChanges).ToList();
+        }
     }
 }
