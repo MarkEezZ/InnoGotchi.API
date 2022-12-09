@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InnoGotchi.API.Migrations
 {
-    public partial class DatabaseCreation : Migration
+    public partial class CreateDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,8 +31,7 @@ namespace InnoGotchi.API.Migrations
                     EyesId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,8 +58,7 @@ namespace InnoGotchi.API.Migrations
                     MouthId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,8 +72,7 @@ namespace InnoGotchi.API.Migrations
                     NoseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,9 +101,14 @@ namespace InnoGotchi.API.Migrations
                     PetId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    thirstyLevel = table.Column<int>(type: "int", nullable: true),
+                    hungerLevel = table.Column<int>(type: "int", nullable: true),
+                    healthLevel = table.Column<int>(type: "int", nullable: true),
+                    moodLevel = table.Column<int>(type: "int", nullable: true),
                     BodyId = table.Column<int>(type: "int", nullable: false),
                     EyesId = table.Column<int>(type: "int", nullable: false),
-                    NoseId = table.Column<int>(type: "int", nullable: false),
+                    NoseId = table.Column<int>(type: "int", nullable: true),
                     MouthId = table.Column<int>(type: "int", nullable: false),
                     FarmId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -141,8 +143,7 @@ namespace InnoGotchi.API.Migrations
                         name: "FK_Pets_Noses_NoseId",
                         column: x => x.NoseId,
                         principalTable: "Noses",
-                        principalColumn: "NoseId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "NoseId");
                 });
 
             migrationBuilder.CreateTable(
@@ -151,13 +152,15 @@ namespace InnoGotchi.API.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Login = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    LastEntry = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastExit = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SettingsId = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Surname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Age = table.Column<int>(type: "int", nullable: true),
+                    LastEntry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastExit = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SettingsId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -166,8 +169,7 @@ namespace InnoGotchi.API.Migrations
                         name: "FK_Users_Settings_SettingsId",
                         column: x => x.SettingsId,
                         principalTable: "Settings",
-                        principalColumn: "SettingsId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "SettingsId");
                 });
 
             migrationBuilder.CreateTable(
@@ -220,6 +222,111 @@ namespace InnoGotchi.API.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Bodies",
+                columns: new[] { "BodyId", "FileName", "Name", "Type" },
+                values: new object[,]
+                {
+                    { 1, "pear_white.png", "White Pear", "pear" },
+                    { 2, "oval_white.png", "White Oval", "oval" },
+                    { 3, "square_white.png", "White Square", "square" },
+                    { 4, "egg_white.png", "White Egg", "egg" },
+                    { 5, "circle_white.png", "White Circle", "circle" },
+                    { 6, "pear_black.png", "Black Pear", "pear" },
+                    { 7, "oval_black.png", "Black Oval", "oval" },
+                    { 8, "square_black.png", "Black Square", "square" },
+                    { 9, "egg_black.png", "Black Egg", "egg" },
+                    { 10, "circle_black.png", "Black Circle", "circle" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Eyes",
+                columns: new[] { "EyesId", "FileName", "Name" },
+                values: new object[,]
+                {
+                    { 1, "eyes_round.png", "Round Eyes" },
+                    { 2, "eyes_oblong.png", "Oblong Eyes" },
+                    { 3, "eyes_vertical_oval.png", "Vertical Oval Eyes" },
+                    { 4, "eyes_vertical_ellipse.png", "Vertical Ellipse Eyes" },
+                    { 5, "eyes_square.png", "Square Eyes" },
+                    { 6, "eyes_one.png", "One Eye" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Farms",
+                columns: new[] { "FarmId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Dungeon" },
+                    { 2, "AWP Lego" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Mouthes",
+                columns: new[] { "MouthId", "FileName", "Name" },
+                values: new object[,]
+                {
+                    { 1, "mouth_cat.png", "Cat Mouth" },
+                    { 2, "mouth_small_smile.png", "Small Smile" },
+                    { 3, "mouth_monster.png", "Monster Mouth" },
+                    { 4, "mouth_monster_libs.png", "Monster Libs" },
+                    { 5, "mouth_vampire.png", "Vampire Mouth" },
+                    { 6, "mouth_small_dash.png", "Small Dash" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Noses",
+                columns: new[] { "NoseId", "FileName", "Name" },
+                values: new object[,]
+                {
+                    { 1, "nose_cat.png", "Cat Nose" },
+                    { 2, "nose_round.png", "Round Nose" },
+                    { 3, "nose_anime.png", "Anime Nose" },
+                    { 4, "nose_egg.png", "Egg Nose" },
+                    { 5, "nose_sharp.png", "Sharp Nose" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Settings",
+                columns: new[] { "SettingsId", "AvatarFileName", "IsInGame", "IsMusic" },
+                values: new object[] { 1, "ava_default.png", true, true });
+
+            migrationBuilder.InsertData(
+                table: "Pets",
+                columns: new[] { "PetId", "Age", "BodyId", "EyesId", "FarmId", "MouthId", "Name", "NoseId", "healthLevel", "hungerLevel", "moodLevel", "thirstyLevel" },
+                values: new object[,]
+                {
+                    { 1, 0, 5, 1, 1, 2, "Dungeon Master", 5, null, null, null, null },
+                    { 2, 0, 8, 4, 2, 3, "Grossmeister", 4, null, null, null, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "Age", "Email", "LastEntry", "LastExit", "Login", "Name", "Password", "SettingsId", "Surname" },
+                values: new object[,]
+                {
+                    { 1, 19, "goog55776@gmail.com", null, null, "MarkEezZ", "Mark", "qwe123", 1, "Lovyagin" },
+                    { 2, null, "goog55776x2@gmail.com", new DateTime(2022, 11, 9, 18, 22, 24, 0, DateTimeKind.Unspecified), new DateTime(2022, 11, 9, 19, 42, 34, 0, DateTimeKind.Unspecified), "Lenon123", "John", "asd456", 1, "Lenon" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Guests",
+                columns: new[] { "GuestsId", "FarmId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 2, 1 },
+                    { 2, 1, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Owners",
+                columns: new[] { "OwnersId", "FarmId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(

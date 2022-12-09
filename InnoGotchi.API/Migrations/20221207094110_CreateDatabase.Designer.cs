@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20221110103851_UpdateDatabase1")]
-    partial class UpdateDatabase1
+    [Migration("20221207094110_CreateDatabase")]
+    partial class CreateDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -440,7 +440,19 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("NoseId")
+                    b.Property<int?>("NoseId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("healthLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("hungerLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("moodLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("thirstyLevel")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -508,16 +520,9 @@ namespace InnoGotchi.API.Migrations
                         new
                         {
                             Id = 1,
-                            AvatarFileName = "ava_1.png",
-                            IsInGame = false,
+                            AvatarFileName = "ava_default.png",
+                            IsInGame = true,
                             IsMusic = true
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AvatarFileName = "ava_2.png",
-                            IsInGame = false,
-                            IsMusic = false
                         });
                 });
 
@@ -530,7 +535,7 @@ namespace InnoGotchi.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -538,14 +543,18 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("LastEntry")
+                    b.Property<DateTime?>("LastEntry")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("LastExit")
+                    b.Property<DateTime?>("LastExit")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -554,8 +563,12 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("SettingsId")
+                    b.Property<int?>("SettingsId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Surname")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -569,22 +582,23 @@ namespace InnoGotchi.API.Migrations
                             Id = 1,
                             Age = 19,
                             Email = "goog55776@gmail.com",
-                            LastEntry = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastExit = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "MarkEezZ",
+                            Login = "MarkEezZ",
+                            Name = "Mark",
                             Password = "qwe123",
-                            SettingsId = 1
+                            SettingsId = 1,
+                            Surname = "Lovyagin"
                         },
                         new
                         {
                             Id = 2,
-                            Age = 20,
                             Email = "goog55776x2@gmail.com",
                             LastEntry = new DateTime(2022, 11, 9, 18, 22, 24, 0, DateTimeKind.Unspecified),
                             LastExit = new DateTime(2022, 11, 9, 19, 42, 34, 0, DateTimeKind.Unspecified),
-                            Name = "John Lenon",
+                            Login = "Lenon123",
+                            Name = "John",
                             Password = "asd456",
-                            SettingsId = 2
+                            SettingsId = 1,
+                            Surname = "Lenon"
                         });
                 });
 
@@ -654,9 +668,7 @@ namespace InnoGotchi.API.Migrations
 
                     b.HasOne("InnoGotchi.API.Entities.Models.Nose", "Nose")
                         .WithMany()
-                        .HasForeignKey("NoseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NoseId");
 
                     b.Navigation("Body");
 
@@ -673,9 +685,7 @@ namespace InnoGotchi.API.Migrations
                 {
                     b.HasOne("InnoGotchi.API.Entities.Models.Settings", "Settings")
                         .WithMany()
-                        .HasForeignKey("SettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SettingsId");
 
                     b.Navigation("Settings");
                 });
