@@ -1,12 +1,20 @@
+using InnoGotchi.API.Contracts;
+using InnoGotchi.API.Entities.ErrorModel;
+using InnoGotchi.API.Extensions;
 using InnoGotchi.API.InnoGotchi.API.Extentions;
 using Microsoft.AspNetCore.HttpOverrides;
+using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
+LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 // Add services to the container.
 
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
+builder.Services.ConfigureLoggerService();
+builder.Services.ConfigureSqlContext(builder.Configuration);
+builder.Services.ConfigureRepositoryManager();
 
 builder.Services.AddControllers();
 
@@ -23,6 +31,7 @@ else
     app.UseHsts();
 }
 
+app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -40,3 +49,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
