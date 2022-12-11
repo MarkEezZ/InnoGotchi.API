@@ -1,3 +1,6 @@
+using InnoGotchi.API.Contracts;
+using InnoGotchi.API.Entities.ErrorModel;
+using InnoGotchi.API.Extensions;
 using InnoGotchi.API.InnoGotchi.API.Extentions;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
@@ -28,6 +31,7 @@ else
     app.UseHsts();
 }
 
+app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -45,3 +49,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

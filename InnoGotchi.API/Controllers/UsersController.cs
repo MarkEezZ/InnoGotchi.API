@@ -20,16 +20,8 @@ namespace InnoGotchi.API.Controllers
         [HttpGet]
         public IActionResult GetUsers()
         {
-            try
-            {
-                var users = repository.User.GetAllUsers(trackChanges: false);
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Something went wrong in the {nameof(GetUsers)} action {ex}");
-                return StatusCode(500, "Internal server error");
-            }
+            var users = repository.User.GetAllUsers(trackChanges: false);
+            return Ok(users);
         }
     }
 }
