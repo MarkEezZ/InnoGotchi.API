@@ -11,9 +11,6 @@ namespace InnoGotchi.API.Entities.DataTransferObjects
     public class UserForAuthorizationDto
     {
         public string Login { get; set; }
-
-        [EmailAddress(ErrorMessage = "Incorrect adress")]
-        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

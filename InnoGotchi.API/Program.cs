@@ -2,6 +2,7 @@ using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.ErrorModel;
 using InnoGotchi.API.Extensions;
 using InnoGotchi.API.InnoGotchi.API.Extentions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
 
@@ -15,7 +16,7 @@ builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddControllers();
 
 var app = builder.Build();

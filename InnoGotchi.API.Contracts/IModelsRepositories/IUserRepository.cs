@@ -10,10 +10,10 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
 {
     public interface IUserRepository
     {
-        void CreateUserByRegData(UserForRegistrationDto userData);
-        User GetUserByAuthData(UserForAuthorizationDto userData, bool trackChanges);
+        void CreateUserByRegData(User user);
+        void DeleteUser(User user);
+        User GetUserByLogin(string login, bool trackChanges);
         User GetUserById(int userId, bool trackChanges);
-        UserInfoDto GetUserInfo(int userId, bool trackChanges);
         void ChangeUserInfo(UserInfoDto userInfo);
         IEnumerable<User> GetAllUsers(bool trackChanges);
     }
