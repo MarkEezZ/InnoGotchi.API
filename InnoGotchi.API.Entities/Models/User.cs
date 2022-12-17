@@ -33,14 +33,11 @@ namespace InnoGotchi.API.Entities.Models
 
         [MaxLength(50, ErrorMessage = "Maximum length for the Surname is 50.")]
         public string Surname { get; set; }
-
         public int? Age { get; set; }
-
         public DateTime? LastEntry { get; set; }
         public DateTime? LastExit { get; set; }
-
-        [ForeignKey(nameof(Settings))]
-        public int? SettingsId { get; set; }
-        public Settings Settings { get; set; }
+        public string AvatarFileName { get; set; }
+        public bool IsInGame { get; set; }
+        public bool IsMusic { get; set; }
     }
 }

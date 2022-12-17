@@ -14,7 +14,7 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
         void DeleteUser(User user);
         User GetUserByLogin(string login, bool trackChanges);
         User GetUserById(int userId, bool trackChanges);
-        void ChangeUserInfo(UserInfoDto userInfo);
+        void ChangeUserInfo(User updatedUser);
         IEnumerable<User> GetAllUsers(bool trackChanges);
     }
 }

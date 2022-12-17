@@ -15,7 +15,6 @@ namespace InnoGotchi.API.Contracts
         IMouthRepository Mouth { get; }
         IFarmRepository Farm { get; }
         IPetRepository Pet { get; }
-        ISettingsRepository Settings { get; }
         IUserRepository User { get; }
         IGuestsRepository Guests { get; }
         IOwnersRepository Owners { get; }

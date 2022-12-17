@@ -34,24 +34,12 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
 
         public User GetUserByLogin(string login, bool trackChanges)
         {
-            if (trackChanges)
-            {
-                return RepositoryContext.Users.Where(u => u.Login == login).Include(u => u.Settings)
-                    .ToList().FirstOrDefault();
-            }
-            return RepositoryContext.Users.Where(u => u.Login == login).Include(u => u.Settings)
-                .AsNoTracking().ToList().FirstOrDefault();
+            return FindByCondition(u => u.Login == login, trackChanges).FirstOrDefault();
         }
 
         public User GetUserById(int userId, bool trackChanges)
         {
-            if (trackChanges)
-            {
-                return RepositoryContext.Users.Where(u => u.Id == userId).Include(u => u.Settings)
-                    .ToList().FirstOrDefault();
-            }
-            return RepositoryContext.Users.Where(u => u.Id == userId).Include(u => u.Settings)
-                .AsNoTracking().ToList().FirstOrDefault();
+            return FindByCondition(u => u.Id == userId, trackChanges).FirstOrDefault();
         }
 
         public void ChangeUserInfo(User updatedUser)

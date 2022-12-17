@@ -32,10 +32,10 @@ namespace InnoGotchi.API.Controllers
         }
 
 
-        [HttpGet("{id}", Name ="GetById")]
-        public IActionResult GetUserById(int id)
+        [HttpGet("{login}", Name ="GetByLogin")]
+        public IActionResult GetUserByLogin(string login)
         {
-            var user = repository.User.GetUserById(id, trackChanges: false);
+            var user = repository.User.GetUserByLogin(login, trackChanges: false);
             if (user == null)
             {
                 return NotFound("User is not found");
@@ -44,10 +44,10 @@ namespace InnoGotchi.API.Controllers
         }
 
 
-        [HttpGet("{id}/info")]
-        public IActionResult GetUserInfo(int id)
+        [HttpGet("{login}/info")]
+        public IActionResult GetUserInfo(string login)
         {
-            var user = repository.User.GetUserById(id, trackChanges: false);
+            var user = repository.User.GetUserByLogin(login, trackChanges: false);
             if (user == null)
             {
                 return NotFound("User is not found");
@@ -58,22 +58,27 @@ namespace InnoGotchi.API.Controllers
         }
 
 
-        //[HttpPut("{id}/info")]
-        //public IActionResult ChangeUserInfo([FromBody]UserInfoDto userInfo, int id)
-        //{
-        //    var settings = new Settings
-        //    {
+        [HttpPut("{login}/info")]
+        public IActionResult ChangeUserInfo(string login, [FromBody]UserInfoDto userInfo)
+        {
+            var user = repository.User.GetUserByLogin(login, trackChanges: false);
+            user.Name = userInfo.Name;
+            user.Surname = userInfo.Surname;
+            user.Email = userInfo.Email;
+            user.Password = userInfo.Password;
+            user.Age = userInfo.Age;
+            user.AvatarFileName = userInfo.AvatarFileName;
+            user.IsInGame = userInfo.IsInGame;
+            user.IsMusic = userInfo.IsMusic;
+            repository.Save();
 
-        //    }
-        //    var user = repository.User.GetUserById(id, trackChanges: false);
-        //    var updatedUser = mapper.Map<User>(userInfo);
-        //}
+            return Ok("User sucsessfully created");
+        }
 
 
         [HttpPost("authorization")]
         public IActionResult AuthorizeUser([FromBody]UserForAuthorizationDto userData)
         {
-            Console.WriteLine(userData.Login + userData.Password);
             var user = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
             if (user == null)
             {

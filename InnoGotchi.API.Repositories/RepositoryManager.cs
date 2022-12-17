@@ -19,7 +19,6 @@ namespace InnoGotchi.API.Repositories
         private IEyesRepository eyesRepository;
         private IFarmRepository farmRepository;
         private IPetRepository petRepository;
-        private ISettingsRepository settingsRepository;
         private IUserRepository userRepository;
         private IOwnersRepository ownersRepository;
         private IGuestsRepository guestsRepository;
@@ -92,17 +91,6 @@ namespace InnoGotchi.API.Repositories
                     petRepository = new PetRepository(repositoryContext);
 
                 return petRepository;
-            }
-        }
-
-        public ISettingsRepository Settings
-        {
-            get
-            {
-                if (settingsRepository == null)
-                    settingsRepository = new SettingsRepository(repositoryContext);
-
-                return settingsRepository;
             }
         }
 

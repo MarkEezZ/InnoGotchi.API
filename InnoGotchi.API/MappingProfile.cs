@@ -9,57 +9,11 @@ namespace InnoGotchi.API
         public MappingProfile()
         {
             CreateMap<UserForRegistrationDto, User>()
-                .ForMember(u => u.SettingsId, opt => opt.MapFrom(src => 1));
+                .ForMember(u => u.AvatarFileName, opt => opt.MapFrom(src => "ava_default.png"))
+                .ForMember(u => u.IsInGame, opt => opt.MapFrom(src => true))
+                .ForMember(u => u.IsMusic, opt => opt.MapFrom(src => true));
 
-            CreateMap<User, UserInfoDto>()
-                .ConvertUsing<UserWithSettingsConverter>();
-
-            CreateMap<UserInfoDto, User>()
-                .ConvertUsing<UserFromSettings>();
-        }
-    }
-
-    public class UserFromSettings : ITypeConverter<UserInfoDto, User>
-    {
-        public User Convert(UserInfoDto source, User destination, ResolutionContext context)
-        {
-            destination = new User
-            {
-               Name = source.Name,
-               Surname = source.Surname,
-               Age = source.Age,
-               Password = source.Password,
-               Email = source.Email,
-               Settings = new Settings
-               {
-                   AvatarFileName = source.AvatarFileName,
-                   IsInGame = source.IsInGame,
-                   IsMusic = source.IsMusic
-               }
-            };
-
-            return destination;
-        }
-    }
-
-    public class UserWithSettingsConverter : ITypeConverter<User, UserInfoDto>
-    {
-        public UserInfoDto Convert(User source, UserInfoDto destination, ResolutionContext context)
-        {
-            var settings = source.Settings;
-
-            destination = new UserInfoDto
-            {
-                Name = source.Name,
-                Surname = source.Surname,
-                Email = source.Email,
-                Password = source.Password,
-                Age = source.Age,
-                AvatarFileName = settings.AvatarFileName,
-                IsInGame = settings.IsInGame,
-                IsMusic = settings.IsMusic
-            };
-            return destination;
+            CreateMap<User, UserInfoDto>().ReverseMap();
         }
     }
 }

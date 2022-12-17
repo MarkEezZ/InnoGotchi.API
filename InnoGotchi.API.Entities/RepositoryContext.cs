@@ -23,7 +23,6 @@ namespace InnoGotchi.API.Entities
             modelBuilder.ApplyConfiguration(new MouthConfiguration());
             modelBuilder.ApplyConfiguration(new FarmConfiguration());
             modelBuilder.ApplyConfiguration(new PetConfiguration());
-            modelBuilder.ApplyConfiguration(new SettingsConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new GuestsConfiguration());
             modelBuilder.ApplyConfiguration(new OwnersConfiguration());
@@ -33,7 +32,6 @@ namespace InnoGotchi.API.Entities
         public DbSet<Eyes> Eyes { get; set; }
         public DbSet<Nose> Noses { get; set; }
         public DbSet<Mouth> Mouthes { get; set; }
-        public DbSet<Settings> Settings { get; set; }
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Farm> Farms { get; set; }
         public DbSet<User> Users { get; set; }

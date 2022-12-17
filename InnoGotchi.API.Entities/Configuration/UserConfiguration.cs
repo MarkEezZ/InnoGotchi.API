@@ -23,7 +23,9 @@ namespace InnoGotchi.API.Entities.Configuration
                     Name = "Mark",
                     Surname = "Lovyagin",
                     Age = 19,
-                    SettingsId = 1
+                    AvatarFileName = "ava_default.png",
+                    IsInGame = true,
+                    IsMusic = true
                 },
                 new User
                 {
@@ -33,9 +35,9 @@ namespace InnoGotchi.API.Entities.Configuration
                     Password = "asd456",
                     Name = "John",
                     Surname = "Lenon",
-                    LastEntry = new DateTime(2022, 11, 9, 18, 22, 24), // год - месяц - день - час - минута - секунда
-                    LastExit = new DateTime(2022, 11, 9, 19, 42, 34), // год - месяц - день - час - минута - секунда
-                    SettingsId = 1                
+                    AvatarFileName = "ava_default.png",
+                    IsInGame = true,
+                    IsMusic = true
                 }
             );
         }
