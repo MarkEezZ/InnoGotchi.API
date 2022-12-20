@@ -42,7 +42,7 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             return FindByCondition(u => u.Id == userId, trackChanges).FirstOrDefault();
         }
 
-        public void ChangeUserInfo(User updatedUser)
+        public void UpdateUser(User updatedUser)
         {
             Update(updatedUser);
         }

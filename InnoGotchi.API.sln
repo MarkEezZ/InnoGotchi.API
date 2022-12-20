@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API.Contracts", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API.Entities", "InnoGotchi.API.Entities\InnoGotchi.API.Entities.csproj", "{252CE0B2-6953-4E6C-A819-1EDD493E1AB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.API.Repositories", "InnoGotchi.API.Repositories\InnoGotchi.API.Repositories.csproj", "{C6D5E4B0-207D-4FF6-A96A-1D77F5A18A91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API.Repositories", "InnoGotchi.API.Repositories\InnoGotchi.API.Repositories.csproj", "{C6D5E4B0-207D-4FF6-A96A-1D77F5A18A91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

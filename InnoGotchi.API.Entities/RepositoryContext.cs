@@ -13,6 +13,8 @@ namespace InnoGotchi.API.Entities
     {
         public RepositoryContext(DbContextOptions options) : base(options) 
         {
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

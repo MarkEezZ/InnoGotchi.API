@@ -70,9 +70,51 @@ namespace InnoGotchi.API.Controllers
             user.AvatarFileName = userInfo.AvatarFileName;
             user.IsInGame = userInfo.IsInGame;
             user.IsMusic = userInfo.IsMusic;
+
+            repository.User.UpdateUser(user);
             repository.Save();
 
-            return Ok("User sucsessfully created");
+            return Ok("User info was sucsessfully changed");
+        }
+
+
+        [HttpPut("{login}/entered")]
+        public IActionResult UserEnteredHisFarm(string login)
+        {
+            DateTime now = DateTime.Now;
+            var user = repository.User.GetUserByLogin(login, trackChanges: false);
+            if (user != null)
+            {
+                user.LastEntry = now;
+                repository.User.UpdateUser(user);
+                repository.Save();
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest($"User with name {login} is not exist");
+            }
+        }
+
+
+        [HttpPut("{login}/left")]
+        public IActionResult UserLeftHisFarm(string login)
+        {
+            DateTime now = DateTime.Now;
+            var user = repository.User.GetUserByLogin(login, trackChanges: false);
+            if (user != null)
+            {
+                user.LastExit = now;
+                repository.User.UpdateUser(user);
+                repository.Save();
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest($"User with name {login} is not exist");
+            }
         }
 
 
@@ -109,7 +151,7 @@ namespace InnoGotchi.API.Controllers
                 repository.Save();
 
                 var userToReturn = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
-                return CreatedAtRoute("GetById", routeValues: new { id = userToReturn.Id }, value: userToReturn);
+                return CreatedAtRoute("GetByLogin", routeValues: new { login = userToReturn.Login }, value: userToReturn);
             }
             else
             {
