@@ -1,5 +1,9 @@
-﻿using InnoGotchi.API.Contracts;
+﻿using AutoMapper;
+using InnoGotchi.API.Contracts;
+using InnoGotchi.API.Entities.DataTransferObjects;
+using InnoGotchi.API.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace InnoGotchi.API.Controllers
 {
@@ -8,27 +12,52 @@ namespace InnoGotchi.API.Controllers
     public class NosesController : ControllerBase
     {
         private readonly IRepositoryManager repository;
-        private readonly ILoggerManager logger;
+        private readonly IMapper mapper;
 
-        public NosesController(ILoggerManager _logger, IRepositoryManager _repository)
+        public NosesController(IRepositoryManager repository, IMapper mapper)
         {
-            logger = _logger;
-            repository = _repository;
+            this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult GetNoses()
         {
-            try
+            var noses = repository.Nose.GetAllNoses(trackChanges: false);
+            if (noses != null)
             {
-                var noses = repository.Nose.GetAllNoses(trackChanges: false);
                 return Ok(noses);
             }
-            catch (Exception ex)
+            return NotFound("Noses are not found");
+        }
+
+        [HttpPost]
+        public IActionResult CreateNose([FromBody]BodyPartDto noseToCreate)
+        {
+            Console.WriteLine($"\n\n{JsonSerializer.Serialize(noseToCreate)}\n\n");
+            var sameNose = repository.Nose.GetNoseByName(noseToCreate.Name, trackChanges: false);
+            if (sameNose == null)
             {
-                logger.LogError($"Something went wrong in the {nameof(GetNoses)} action {ex}");
-                return StatusCode(500, "Internal server error");
+                var nose = mapper.Map<Nose>(noseToCreate);
+                repository.Nose.CreateNose(nose);
+                repository.Save();
+
+                return Ok("Nose was successfuly added");
             }
+            return BadRequest($"Nose with name {noseToCreate.Name} already exists");
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteNose([FromBody]BodyPartDto noseToDelete)
+        {
+            var nose = repository.Nose.GetNoseByName(noseToDelete.Name, trackChanges: false);
+            if (nose != null)
+            {
+                repository.Nose.DeleteNose(nose);
+                repository.Save();
+                return Ok("Nose was successfuly deleted");
+            }
+            return BadRequest($"There is no nose with name {noseToDelete.Name}");
         }
     }
 }

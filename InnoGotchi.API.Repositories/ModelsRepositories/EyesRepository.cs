@@ -16,9 +16,29 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
 
         }
 
+        public void CreateEyes(Eyes eyes)
+        {
+            Create(eyes);
+        }
+
+        public void DeleteEyes(Eyes eyes)
+        {
+            Delete(eyes);
+        }
+
         public IEnumerable<Eyes> GetAllEyes(bool trackChanges)
         {
-            return FindAll(trackChanges).OrderBy(e => e.Name).ToList();
+            return FindAll(trackChanges).OrderBy(e => e.Id).ToList();
+        }
+
+        public Eyes GetEyesById(int eyesId, bool trackChanges)
+        {
+            return FindByCondition(e => e.Id == eyesId, trackChanges).FirstOrDefault();
+        }
+
+        public Eyes GetEyesByName(string name, bool trackChanges)
+        {
+            return FindByCondition(e => e.Name == name, trackChanges).FirstOrDefault();
         }
     }
 }

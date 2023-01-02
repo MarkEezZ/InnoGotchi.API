@@ -16,9 +16,29 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
 
         }
 
+        public void CreateNose(Nose nose)
+        {
+            Create(nose);
+        }
+
+        public void DeleteNose(Nose nose)
+        {
+            Delete(nose);
+        }
+
         public IEnumerable<Nose> GetAllNoses(bool trackChanges)
         {
-            return FindAll(trackChanges).OrderBy(n => n.Name).ToList();
+            return FindAll(trackChanges).OrderBy(n => n.Id).ToList();
+        }
+
+        public Nose GetNoseById(int noseId, bool trackChanges)
+        {
+            return FindByCondition(n => n.Id == noseId, trackChanges).FirstOrDefault();
+        }
+
+        public Nose GetNoseByName(string name, bool trackChanges)
+        {
+            return FindByCondition(n => n.Name == name, trackChanges).FirstOrDefault();
         }
     }
 }

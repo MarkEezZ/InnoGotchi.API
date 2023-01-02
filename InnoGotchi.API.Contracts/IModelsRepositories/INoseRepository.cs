@@ -10,5 +10,9 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
     public interface INoseRepository
     {
         IEnumerable<Nose> GetAllNoses(bool trackChanges);
+        void CreateNose(Nose nose);
+        void DeleteNose(Nose nose);
+        Nose GetNoseByName(string name, bool trackChanges);
+        Nose GetNoseById(int noseId, bool trackChanges);
     }
 }

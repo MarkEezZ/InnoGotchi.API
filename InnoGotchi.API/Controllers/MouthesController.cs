@@ -1,34 +1,61 @@
-﻿using InnoGotchi.API.Contracts;
+﻿using AutoMapper;
+using InnoGotchi.API.Contracts;
+using InnoGotchi.API.Entities.DataTransferObjects;
+using InnoGotchi.API.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/mouthes")]
+    [Route("api/mouths")]
     [ApiController]
     public class MouthesController: ControllerBase
     {
         private readonly IRepositoryManager repository;
-        private readonly ILoggerManager logger;
+        private readonly IMapper mapper;
 
-        public MouthesController(IRepositoryManager repository, ILoggerManager logger)
+        public MouthesController(IRepositoryManager repository, IMapper mapper)
         {
             this.repository = repository;
-            this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetMouthes()
+        public IActionResult GetMouths()
         {
-            try
+            var mouth = repository.Mouth.GetAllMouthes(trackChanges: false);
+            if (mouth != null)
             {
-                var mouthes = repository.Mouth.GetAllMouthes(trackChanges: false);
-                return Ok(mouthes);
+                return Ok(mouth);
             }
-            catch (Exception ex)
+            return NotFound("Mouths are not found");
+        }
+
+        [HttpPost]
+        public IActionResult CreateMouth([FromBody]BodyPartDto mouthToCreate)
+        {
+            var sameMouth = repository.Mouth.GetMouthByName(mouthToCreate.Name, trackChanges: false);
+            if (sameMouth == null)
             {
-                logger.LogError($"Something went wrong in the {nameof(GetMouthes)} action {ex}");
-                return StatusCode(500, "Internal server error");
+                var mouth = mapper.Map<Mouth>(mouthToCreate);
+                repository.Mouth.CreateMouth(mouth);
+                repository.Save();
+
+                return Ok("Mouth was successfuly added");
             }
+            return BadRequest($"Mouth with name {mouthToCreate.Name} already exists");
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteMouth([FromBody]BodyPartDto mouthToDelete)
+        {
+            var mouth = repository.Mouth.GetMouthByName(mouthToDelete.Name, trackChanges: false);
+            if (mouth != null)
+            {
+                repository.Mouth.DeleteMouth(mouth);
+                repository.Save();
+                return Ok("Mouth was successfuly deleted");
+            }
+            return BadRequest($"There is no mouth with name {mouthToDelete.Name}");
         }
     }
 }

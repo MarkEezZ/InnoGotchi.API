@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InnoGotchi.API.Contracts.IModelsRepositories;
+using System.Xml.Linq;
 
 namespace InnoGotchi.API.Repositories.ModelsRepositories
 {
@@ -16,9 +17,29 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
 
         }
 
+        public void CreateBody(Body body)
+        {
+            Create(body);
+        }
+
+        public void DeleteBody(Body body)
+        {
+            Delete(body);
+        }
+
         public IEnumerable<Body> GetAllBodies(bool trackChanges)
         {
-            return FindAll(trackChanges).OrderBy(b => b.Name).ToList();
+            return FindAll(trackChanges).OrderBy(b => b.Id).ToList();
+        }
+
+        public Body GetBodyById(int bodyId, bool trackChanges)
+        {
+            return FindByCondition(b => b.Id == bodyId, trackChanges).FirstOrDefault();
+        }
+
+        public Body GetBodyByName(string name, bool trackChanges)
+        {
+            return FindByCondition(b => b.Name == name, trackChanges).FirstOrDefault();
         }
     }
 }

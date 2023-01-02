@@ -1,3 +1,6 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using InnoGotchi.API;
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.ErrorModel;
 using InnoGotchi.API.Extensions;
@@ -17,6 +20,10 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();

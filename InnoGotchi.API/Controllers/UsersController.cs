@@ -16,13 +16,12 @@ namespace InnoGotchi.API.Controllers
         private readonly ILoggerManager logger;
         private readonly IMapper mapper;
 
-        public UsersController (IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public UsersController (IRepositoryManager repository, IMapper mapper, ILoggerManager logger)
         {
             this.repository = repository;
-            this.logger = logger;
             this.mapper = mapper;
+            this.logger = logger;
         }
-
 
         [HttpGet]
         public IActionResult GetUsers()
@@ -31,9 +30,8 @@ namespace InnoGotchi.API.Controllers
             return Ok(users);
         }
 
-
-        [HttpGet("{login}", Name ="GetByLogin")]
-        public IActionResult GetUserByLogin(string login)
+        [HttpGet("{login}", Name = "GetByLogin")]
+        public IActionResult GetUserByLogin([FromRoute]string login)
         {
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
             if (user == null)
@@ -43,9 +41,8 @@ namespace InnoGotchi.API.Controllers
             return Ok(user);
         }
 
-
         [HttpGet("{login}/info")]
-        public IActionResult GetUserInfo(string login)
+        public IActionResult GetUserInfo([FromRoute]string login)
         {
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
             if (user == null)
@@ -57,9 +54,8 @@ namespace InnoGotchi.API.Controllers
             return Ok(userInfo);
         }
 
-
         [HttpPut("{login}/info")]
-        public IActionResult ChangeUserInfo(string login, [FromBody]UserInfoDto userInfo)
+        public IActionResult ChangeUserInfo([FromRoute]string login, [FromBody]UserInfoDto userInfo)
         {
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
             user.Name = userInfo.Name;
@@ -77,9 +73,8 @@ namespace InnoGotchi.API.Controllers
             return Ok("User info was sucsessfully changed");
         }
 
-
         [HttpPut("{login}/entered")]
-        public IActionResult UserEnteredHisFarm(string login)
+        public IActionResult UserEnteredHisFarm([FromRoute]string login)
         {
             DateTime now = DateTime.Now;
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
@@ -97,9 +92,8 @@ namespace InnoGotchi.API.Controllers
             }
         }
 
-
         [HttpPut("{login}/left")]
-        public IActionResult UserLeftHisFarm(string login)
+        public IActionResult UserLeftHisFarm([FromRoute]string login)
         {
             DateTime now = DateTime.Now;
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
@@ -116,7 +110,6 @@ namespace InnoGotchi.API.Controllers
                 return BadRequest($"User with name {login} is not exist");
             }
         }
-
 
         [HttpPost("authorization")]
         public IActionResult AuthorizeUser([FromBody]UserForAuthorizationDto userData)
@@ -139,7 +132,6 @@ namespace InnoGotchi.API.Controllers
             }
         }
 
-
         [HttpPost("registration")]
         public IActionResult RegisterUser([FromBody]UserForRegistrationDto userData)
         {
@@ -159,9 +151,8 @@ namespace InnoGotchi.API.Controllers
             }
         }
 
-
-        [HttpPost("removeuser")]
-        public IActionResult DeleteUser([FromBody] int userId)
+        [HttpDelete("removeuser")]
+        public IActionResult DeleteUser([FromBody]int userId)
         {
             var userToDelete = repository.User.GetUserById(userId, trackChanges: false);
             if (userToDelete != null)
