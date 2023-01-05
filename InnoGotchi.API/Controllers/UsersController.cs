@@ -36,7 +36,7 @@ namespace InnoGotchi.API.Controllers
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
             if (user == null)
             {
-                return NotFound("User is not found");
+                return NotFound("The user is not found.");
             }
             return Ok(user);
         }
@@ -45,32 +45,35 @@ namespace InnoGotchi.API.Controllers
         public IActionResult GetUserInfo([FromRoute]string login)
         {
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
-            if (user == null)
+            if (user != null)
             {
-                return NotFound("User is not found");
+                var userInfo = mapper.Map<UserInfoDto>(user);
+                return Ok(userInfo);
             }
-
-            var userInfo = mapper.Map<UserInfoDto>(user);
-            return Ok(userInfo);
+            return NotFound("The user is not found.");
         }
 
         [HttpPut("{login}/info")]
         public IActionResult ChangeUserInfo([FromRoute]string login, [FromBody]UserInfoDto userInfo)
         {
             var user = repository.User.GetUserByLogin(login, trackChanges: false);
-            user.Name = userInfo.Name;
-            user.Surname = userInfo.Surname;
-            user.Email = userInfo.Email;
-            user.Password = userInfo.Password;
-            user.Age = userInfo.Age;
-            user.AvatarFileName = userInfo.AvatarFileName;
-            user.IsInGame = userInfo.IsInGame;
-            user.IsMusic = userInfo.IsMusic;
+            if (user != null)
+            {
+                user.Name = userInfo.Name;
+                user.Surname = userInfo.Surname;
+                user.Email = userInfo.Email;
+                user.Password = userInfo.Password;
+                user.Age = userInfo.Age;
+                user.AvatarFileName = userInfo.AvatarFileName;
+                user.IsInGame = userInfo.IsInGame;
+                user.IsMusic = userInfo.IsMusic;
 
-            repository.User.UpdateUser(user);
-            repository.Save();
+                repository.User.UpdateUser(user);
+                repository.Save();
 
-            return Ok("User info was sucsessfully changed");
+                return Ok("User info was sucsessfully changed.");
+            }
+            return BadRequest($"The user is not found.");
         }
 
         [HttpPut("{login}/entered")]
@@ -88,7 +91,7 @@ namespace InnoGotchi.API.Controllers
             }
             else
             {
-                return BadRequest($"User with name {login} is not exist");
+                return BadRequest($"The user with name \"{login}\" is not exist.");
             }
         }
 
@@ -107,7 +110,7 @@ namespace InnoGotchi.API.Controllers
             }
             else
             {
-                return BadRequest($"User with name {login} is not exist");
+                return BadRequest($"The user with name \"{login}\" is not exist.");
             }
         }
 
@@ -117,7 +120,7 @@ namespace InnoGotchi.API.Controllers
             var user = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
             if (user == null)
             {
-                return NotFound($"User with login \"{userData.Login}\" is not found");
+                return NotFound($"The user with login \"{userData.Login}\" is not found.");
             }
             else
             {
@@ -127,7 +130,7 @@ namespace InnoGotchi.API.Controllers
                 }
                 else
                 {
-                    return BadRequest("Invalid password");
+                    return BadRequest("Invalid password.");
                 }
             }
         }
@@ -147,11 +150,11 @@ namespace InnoGotchi.API.Controllers
             }
             else
             {
-                return BadRequest("User with this login already exists");
+                return BadRequest("The user with this login already exists.");
             }
         }
 
-        [HttpDelete("removeuser")]
+        [HttpDelete("remove")]
         public IActionResult DeleteUser([FromBody]int userId)
         {
             var userToDelete = repository.User.GetUserById(userId, trackChanges: false);
@@ -159,11 +162,11 @@ namespace InnoGotchi.API.Controllers
             {
                 repository.User.DeleteUser(userToDelete);
                 repository.Save();
-                return Ok($"User with ID {userId} was sucsessfuly deleted");
+                return Ok($"The user with ID \"{userId}\" was sucsessfuly deleted.");
             }
             else
             {
-                return NotFound("User is not found");
+                return NotFound("The user is not found.");
             }
         }
     }

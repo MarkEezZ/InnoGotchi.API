@@ -28,13 +28,12 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(eyes);
             }
-            return NotFound("Eyes are not found");
+            return NotFound("Eyes are not found.");
         }
 
         [HttpPost]
         public IActionResult CreateEyes([FromBody]BodyPartDto eyesToCreate)
         {
-            Console.WriteLine($"\n\n{JsonSerializer.Serialize(eyesToCreate)}\n\n");
             var sameEyes = repository.Eyes.GetEyesByName(eyesToCreate.Name, trackChanges: false);
             if (sameEyes == null)
             {
@@ -42,9 +41,9 @@ namespace InnoGotchi.API.Controllers
                 repository.Eyes.CreateEyes(eyes);
                 repository.Save();
 
-                return Ok("Eyes was successfuly added");
+                return Ok("Eyes was successfuly added.");
             }
-            return BadRequest($"Eyes with name {eyesToCreate.Name} already exists");
+            return BadRequest($"Eyes with name \"{eyesToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
@@ -55,9 +54,9 @@ namespace InnoGotchi.API.Controllers
             {
                 repository.Eyes.DeleteEyes(eyes);
                 repository.Save();
-                return Ok("Eyes was successfuly deleted");
+                return Ok("Eyes was successfuly deleted.");
             }
-            return BadRequest($"There is no eyes with name {eyesToDelete.Name}");
+            return BadRequest($"There is no eyes with name \"{eyesToDelete.Name}\".");
         }
     }
 }

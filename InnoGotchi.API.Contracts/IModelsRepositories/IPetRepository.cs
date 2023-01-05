@@ -9,6 +9,9 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
 {
     public interface IPetRepository
     {
-        IEnumerable<Pet> GetAllUserPets(bool trackChanges, User user); 
+        void CreatePet(Pet pet);
+        IEnumerable<Pet> GetAllFarmPets(int farmId, bool trackChanges);
+        Pet GetPetByName(string petName, bool trackChanges);
+        void DeletePet(Pet pet);
     }
 }

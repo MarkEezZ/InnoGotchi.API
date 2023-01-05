@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace InnoGotchi.API.Contracts.IModelsRepositories
 {
-    public interface IOwnersRepository
+    public interface IStatisticsRepository
     {
-        Owners GetOwnFarmByUserId(int userId, bool trackChanges);
-        void AddFarmOwner(Owners record);
+        Statistics GetStatisticsByFarmId(int farmId, bool trackChanges);
+        void UpdateStatistics(Statistics statistics);
+        void CreateStatistics(Statistics statistics);
     }
 }

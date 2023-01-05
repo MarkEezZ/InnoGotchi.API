@@ -14,7 +14,6 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public MouthRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
         public void CreateMouth(Mouth mouth)

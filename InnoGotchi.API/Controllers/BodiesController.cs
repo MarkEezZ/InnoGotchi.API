@@ -29,7 +29,7 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(bodies);
             }
-            return NotFound("Bodies are not found");
+            return NotFound("Bodies are not found.");
         }
 
         [HttpPost]
@@ -43,9 +43,9 @@ namespace InnoGotchi.API.Controllers
                 repository.Body.CreateBody(body);
                 repository.Save();
 
-                return Ok("Body was successfuly added");
+                return Ok("Body was successfuly added.");
             }
-            return BadRequest($"Body with name {bodyToCreate.Name} already exists");
+            return BadRequest($"Body with name \"{bodyToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
@@ -56,9 +56,9 @@ namespace InnoGotchi.API.Controllers
             {
                 repository.Body.DeleteBody(body);
                 repository.Save();
-                return Ok("Body was successfuly deleted");
+                return Ok("Body was successfuly deleted.");
             }
-            return BadRequest($"There is no body with name {bodyToDelete.Name}");
+            return BadRequest($"There is no body with name \"{bodyToDelete.Name}\".");
         }
     }
 }

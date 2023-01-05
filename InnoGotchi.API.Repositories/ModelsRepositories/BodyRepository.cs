@@ -14,7 +14,6 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public BodyRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
         public void CreateBody(Body body)

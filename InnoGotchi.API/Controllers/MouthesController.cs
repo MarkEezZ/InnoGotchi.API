@@ -27,7 +27,7 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(mouth);
             }
-            return NotFound("Mouths are not found");
+            return NotFound("Mouths are not found.");
         }
 
         [HttpPost]
@@ -40,9 +40,9 @@ namespace InnoGotchi.API.Controllers
                 repository.Mouth.CreateMouth(mouth);
                 repository.Save();
 
-                return Ok("Mouth was successfuly added");
+                return Ok("Mouth was successfuly added.");
             }
-            return BadRequest($"Mouth with name {mouthToCreate.Name} already exists");
+            return BadRequest($"Mouth with name \"{mouthToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
@@ -53,9 +53,9 @@ namespace InnoGotchi.API.Controllers
             {
                 repository.Mouth.DeleteMouth(mouth);
                 repository.Save();
-                return Ok("Mouth was successfuly deleted");
+                return Ok("Mouth was successfuly deleted.");
             }
-            return BadRequest($"There is no mouth with name {mouthToDelete.Name}");
+            return BadRequest($"There is no mouth with name \"{mouthToDelete.Name}\".");
         }
     }
 }

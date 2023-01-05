@@ -20,11 +20,6 @@ namespace InnoGotchi.API.Entities.Models
         [Required(ErrorMessage = "An Age is a required field.")]
         public int Age { get; set; }
 
-        public int? thirstyLevel { get; set; }
-        public int? hungerLevel { get; set; }
-        public int? healthLevel { get; set; }
-        public int? moodLevel { get; set; }
-
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }
         public Body Body { get; set; }

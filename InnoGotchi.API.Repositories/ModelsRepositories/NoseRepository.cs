@@ -13,7 +13,6 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public NoseRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
         public void CreateNose(Nose nose)

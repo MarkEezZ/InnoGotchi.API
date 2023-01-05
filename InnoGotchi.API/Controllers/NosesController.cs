@@ -28,7 +28,7 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(noses);
             }
-            return NotFound("Noses are not found");
+            return NotFound("Noses are not found.");
         }
 
         [HttpPost]
@@ -42,9 +42,9 @@ namespace InnoGotchi.API.Controllers
                 repository.Nose.CreateNose(nose);
                 repository.Save();
 
-                return Ok("Nose was successfuly added");
+                return Ok("Nose was successfuly added.");
             }
-            return BadRequest($"Nose with name {noseToCreate.Name} already exists");
+            return BadRequest($"Nose with name \"{noseToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
@@ -55,9 +55,9 @@ namespace InnoGotchi.API.Controllers
             {
                 repository.Nose.DeleteNose(nose);
                 repository.Save();
-                return Ok("Nose was successfuly deleted");
+                return Ok("Nose was successfuly deleted.");
             }
-            return BadRequest($"There is no nose with name {noseToDelete.Name}");
+            return BadRequest($"There is no nose with name \"{noseToDelete.Name}\".");
         }
     }
 }

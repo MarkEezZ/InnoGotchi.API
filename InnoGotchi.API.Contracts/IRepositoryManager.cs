@@ -18,6 +18,7 @@ namespace InnoGotchi.API.Contracts
         IUserRepository User { get; }
         IGuestsRepository Guests { get; }
         IOwnersRepository Owners { get; }
+        IStatisticsRepository Statistics { get; }
         void Save();
     }
 }

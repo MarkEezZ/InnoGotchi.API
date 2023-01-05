@@ -13,12 +13,31 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public GuestsRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
-        public IEnumerable<Guests> GetAllGuests(bool trackChanges)
+        public void CreateGuest(Guests guest)
         {
-            return FindAll(trackChanges).OrderBy(g => g.UserId).ToList();
+            Create(guest);
+        }
+
+        public void DeleteGuest(Guests guest)
+        {
+            Delete(guest);
+        }
+
+        public Guests GetGuestByUserAndFarm(int userId, int farmId, bool trackChanges)
+        {
+            return FindByCondition(g => g.UserId == userId && g.FarmId == farmId, trackChanges).FirstOrDefault();
+        }
+
+        public IEnumerable<Guests> GetGuestFarmsByUserId(int userId, bool trackChanges)
+        {
+            return FindByCondition(u => u.UserId == userId, trackChanges).ToList();
+        }
+
+        public IEnumerable<Guests> GetGuestsByFarmId(int farmId, bool trackChanges)
+        {
+            return FindByCondition(u => u.FarmId == farmId, trackChanges).ToList();
         }
     }
 }

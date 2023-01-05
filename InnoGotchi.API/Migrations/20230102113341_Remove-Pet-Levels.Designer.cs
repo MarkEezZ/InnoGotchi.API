@@ -4,6 +4,7 @@ using InnoGotchi.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20230102113341_RemovePetLevels")]
+    partial class RemovePetLevels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -480,67 +482,6 @@ namespace InnoGotchi.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("InnoGotchi.API.Entities.Models.Statistics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("StatisticsId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AlivePetsCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AverageAge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AverageFeedingPeriod")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AverageHappinessPeriod")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AverageThirstPeriod")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DeadPetsCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FarmId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FarmId");
-
-                    b.ToTable("Statistics");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AlivePetsCount = 1,
-                            AverageAge = 0,
-                            AverageFeedingPeriod = 0,
-                            AverageHappinessPeriod = 0,
-                            AverageThirstPeriod = 0,
-                            DeadPetsCount = 0,
-                            FarmId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AlivePetsCount = 1,
-                            AverageAge = 0,
-                            AverageFeedingPeriod = 0,
-                            AverageHappinessPeriod = 0,
-                            AverageThirstPeriod = 0,
-                            DeadPetsCount = 0,
-                            FarmId = 2
-                        });
-                });
-
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -700,17 +641,6 @@ namespace InnoGotchi.API.Migrations
                     b.Navigation("Mouth");
 
                     b.Navigation("Nose");
-                });
-
-            modelBuilder.Entity("InnoGotchi.API.Entities.Models.Statistics", b =>
-                {
-                    b.HasOne("InnoGotchi.API.Entities.Models.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Farm");
                 });
 #pragma warning restore 612, 618
         }

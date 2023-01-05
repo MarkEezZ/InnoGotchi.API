@@ -13,15 +13,26 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public PetRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
-        public IEnumerable<Pet> GetAllUserPets(bool trackChanges, User user)
+        public void CreatePet(Pet pet)
         {
-            return FindAll(trackChanges)
-                .Where(p => p.FarmId == user.Id)
-                .OrderBy(p => p.FarmId)
-                .ToList();
+            Create(pet);
+        }
+
+        public void DeletePet(Pet pet)
+        {
+            Delete(pet);
+        }
+
+        public IEnumerable<Pet> GetAllFarmPets(int farmId, bool trackChanges)
+        {
+            return FindByCondition(p => p.FarmId == farmId, trackChanges).OrderBy(p => p.Age).ToList();
+        }
+
+        public Pet GetPetByName(string petName, bool trackChanges)
+        {
+            return FindByCondition(p => p.Name == petName, trackChanges).FirstOrDefault();
         }
     }
 }

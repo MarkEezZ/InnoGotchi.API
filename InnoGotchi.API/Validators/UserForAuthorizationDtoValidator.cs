@@ -7,8 +7,8 @@ namespace InnoGotchi.API.Validators
     {
         public UserForAuthorizationDtoValidator()
         {
-            RuleFor(u => u.Login).NotNull().WithMessage("Please, enter a login");
-            RuleFor(u => u.Password).NotNull().WithMessage("Please, enter a password");
+            RuleFor(u => u.Login).NotNull().WithMessage("Please, enter a login.");
+            RuleFor(u => u.Password).NotNull().WithMessage("Please, enter a password.");
         }
     }
 }

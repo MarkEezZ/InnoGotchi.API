@@ -12,13 +12,17 @@ namespace InnoGotchi.API
                 .ForMember(u => u.AvatarFileName, opt => opt.MapFrom(src => "ava_default.png"))
                 .ForMember(u => u.IsInGame, opt => opt.MapFrom(src => true))
                 .ForMember(u => u.IsMusic, opt => opt.MapFrom(src => true));
-
             CreateMap<User, UserInfoDto>().ReverseMap();
-
             CreateMap<BodyPartDto, Body>();
             CreateMap<BodyPartDto, Eyes>();
             CreateMap<BodyPartDto, Mouth>();
             CreateMap<BodyPartDto, Nose>();
+            CreateMap<PetDto, Pet>()
+                .ForMember(p => p.Age, age => age.MapFrom(src => 0));
+            CreateMap<Pet, PetToReturnDto>();
+            CreateMap<FarmToCreate, Farm>();
+            CreateMap<User, GuestInfo>();
+            CreateMap<Statistics, StatisticsDto>();
         }
     }
 }

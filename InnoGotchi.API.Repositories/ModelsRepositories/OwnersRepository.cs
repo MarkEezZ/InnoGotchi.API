@@ -13,12 +13,16 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public OwnersRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
-        public IEnumerable<Owners> GetAllOwners(bool trackChanges)
+        public void AddFarmOwner(Owners record)
         {
-            return FindAll(trackChanges).ToList();
+            Create(record);
+        }
+
+        public Owners GetOwnFarmByUserId(int userId, bool trackChanges)
+        {
+            return FindByCondition(u => u.UserId == userId, trackChanges).FirstOrDefault();
         }
     }
 }

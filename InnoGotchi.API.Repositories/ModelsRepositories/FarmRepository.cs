@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InnoGotchi.API.Contracts.IModelsRepositories;
+using InnoGotchi.API.Entities.DataTransferObjects;
 
 namespace InnoGotchi.API.Repositories.ModelsRepositories
 {
@@ -13,12 +14,21 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public FarmRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
-        public IEnumerable<Farm> GetAllFarms(bool trackChanges)
+        public void CreateFarm(Farm farm)
         {
-            return FindAll(trackChanges).OrderBy(f => f.Id).ToList();
+            Create(farm);
+        }
+
+        public Farm GetFarmByFarmId(int farmId, bool trackChanges)
+        {
+            return FindByCondition(f => f.Id == farmId, trackChanges).FirstOrDefault();
+        }
+
+        public Farm GetFarmByFarmName(string farmName, bool trackChanges)
+        {
+            return FindByCondition(f => f.Name == farmName, trackChanges).FirstOrDefault();
         }
     }
 }

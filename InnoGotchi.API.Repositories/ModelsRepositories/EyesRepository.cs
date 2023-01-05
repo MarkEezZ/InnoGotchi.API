@@ -13,7 +13,6 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
     {
         public EyesRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
 
         public void CreateEyes(Eyes eyes)

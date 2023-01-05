@@ -28,6 +28,7 @@ namespace InnoGotchi.API.Entities
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new GuestsConfiguration());
             modelBuilder.ApplyConfiguration(new OwnersConfiguration());
+            modelBuilder.ApplyConfiguration(new StatisticsConfiguration());
         }
 
         public DbSet<Body> Bodies { get; set; }
@@ -39,5 +40,6 @@ namespace InnoGotchi.API.Entities
         public DbSet<User> Users { get; set; }
         public DbSet<Guests> Guests { get; set; }
         public DbSet<Owners> Owners { get; set; }
+        public DbSet<Statistics> Statistics { get; set; }
     }
 }

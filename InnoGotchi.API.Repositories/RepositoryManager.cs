@@ -22,6 +22,7 @@ namespace InnoGotchi.API.Repositories
         private IUserRepository userRepository;
         private IOwnersRepository ownersRepository;
         private IGuestsRepository guestsRepository;
+        private IStatisticsRepository statisticsRepository;
 
         public RepositoryManager(RepositoryContext _repositoryContext)
         {
@@ -124,6 +125,17 @@ namespace InnoGotchi.API.Repositories
                     ownersRepository = new OwnersRepository(repositoryContext);
 
                 return ownersRepository;
+            }
+        }
+
+        public IStatisticsRepository Statistics
+        {
+            get
+            {
+                if (statisticsRepository == null)
+                    statisticsRepository = new StatisticsRepository(repositoryContext);
+
+                return statisticsRepository;
             }
         }
 
