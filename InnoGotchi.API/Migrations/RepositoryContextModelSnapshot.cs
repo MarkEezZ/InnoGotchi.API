@@ -201,18 +201,6 @@ namespace InnoGotchi.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Farms");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Dungeon"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "AWP Lego"
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>
@@ -227,8 +215,8 @@ namespace InnoGotchi.API.Migrations
                     b.Property<int>("FarmId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -237,20 +225,6 @@ namespace InnoGotchi.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Guests");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FarmId = 2,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FarmId = 1,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Mouth", b =>
@@ -383,8 +357,8 @@ namespace InnoGotchi.API.Migrations
                     b.Property<int>("FarmId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -393,20 +367,6 @@ namespace InnoGotchi.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Owners");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FarmId = 1,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FarmId = 2,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Pet", b =>
@@ -441,6 +401,9 @@ namespace InnoGotchi.API.Migrations
                     b.Property<int?>("NoseId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("TimeOfCreating")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BodyId");
@@ -454,30 +417,6 @@ namespace InnoGotchi.API.Migrations
                     b.HasIndex("NoseId");
 
                     b.ToTable("Pets");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Age = 0,
-                            BodyId = 5,
-                            EyesId = 1,
-                            FarmId = 1,
-                            MouthId = 2,
-                            Name = "Dungeon Master",
-                            NoseId = 5
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Age = 0,
-                            BodyId = 8,
-                            EyesId = 4,
-                            FarmId = 2,
-                            MouthId = 3,
-                            Name = "Grossmeister",
-                            NoseId = 4
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Statistics", b =>
@@ -515,40 +454,14 @@ namespace InnoGotchi.API.Migrations
                     b.HasIndex("FarmId");
 
                     b.ToTable("Statistics");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AlivePetsCount = 1,
-                            AverageAge = 0,
-                            AverageFeedingPeriod = 0,
-                            AverageHappinessPeriod = 0,
-                            AverageThirstPeriod = 0,
-                            DeadPetsCount = 0,
-                            FarmId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AlivePetsCount = 1,
-                            AverageAge = 0,
-                            AverageFeedingPeriod = 0,
-                            AverageHappinessPeriod = 0,
-                            AverageThirstPeriod = 0,
-                            DeadPetsCount = 0,
-                            FarmId = 2
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("UserId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("Age")
                         .HasColumnType("int");
@@ -582,10 +495,8 @@ namespace InnoGotchi.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .HasMaxLength(50)
@@ -594,33 +505,6 @@ namespace InnoGotchi.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Age = 19,
-                            AvatarFileName = "ava_default.png",
-                            Email = "goog55776@gmail.com",
-                            IsInGame = true,
-                            IsMusic = true,
-                            Login = "MarkEezZ",
-                            Name = "Mark",
-                            Password = "qwe123",
-                            Surname = "Lovyagin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AvatarFileName = "ava_default.png",
-                            Email = "goog55776x2@gmail.com",
-                            IsInGame = true,
-                            IsMusic = true,
-                            Login = "Lenon123",
-                            Name = "John",
-                            Password = "asd456",
-                            Surname = "Lenon"
-                        });
                 });
 
             modelBuilder.Entity("InnoGotchi.API.Entities.Models.Guests", b =>

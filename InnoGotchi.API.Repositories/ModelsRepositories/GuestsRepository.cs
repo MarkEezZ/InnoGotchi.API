@@ -25,19 +25,19 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             Delete(guest);
         }
 
-        public Guests GetGuestByUserAndFarm(int userId, int farmId, bool trackChanges)
+        public Guests GetGuestByUserAndFarm(Guid userId, int farmId, bool trackChanges)
         {
-            return FindByCondition(g => g.UserId == userId && g.FarmId == farmId, trackChanges).FirstOrDefault();
+            return FindByCondition(r => r.UserId == userId && r.FarmId == farmId, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<Guests> GetGuestFarmsByUserId(int userId, bool trackChanges)
+        public IEnumerable<Guests> GetGuestFarmsByUserId(Guid userId, bool trackChanges)
         {
-            return FindByCondition(u => u.UserId == userId, trackChanges).ToList();
+            return FindByCondition(r => r.UserId == userId, trackChanges).ToList();
         }
 
         public IEnumerable<Guests> GetGuestsByFarmId(int farmId, bool trackChanges)
         {
-            return FindByCondition(u => u.FarmId == farmId, trackChanges).ToList();
+            return FindByCondition(r => r.FarmId == farmId, trackChanges).ToList();
         }
     }
 }

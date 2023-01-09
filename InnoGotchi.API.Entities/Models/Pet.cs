@@ -20,6 +20,8 @@ namespace InnoGotchi.API.Entities.Models
         [Required(ErrorMessage = "An Age is a required field.")]
         public int Age { get; set; }
 
+        public DateTime TimeOfCreating { get; set; }
+
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }
         public Body Body { get; set; }

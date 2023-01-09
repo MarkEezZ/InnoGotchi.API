@@ -11,7 +11,7 @@ namespace InnoGotchi.API.Entities.Models
     public class User
     {
         [Column("UserId")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required(ErrorMessage = "A Name field is required.")]
         [MaxLength(50, ErrorMessage = "Maximum length for the Login is 50.")]
@@ -22,11 +22,7 @@ namespace InnoGotchi.API.Entities.Models
         [MaxLength(100, ErrorMessage = "Maximum length for the Email is 100.")]
         [MinLength(5, ErrorMessage = "Minimum length for the Email is 5.")]
         public string Email { get; set; }
-
-        [Required(ErrorMessage = "A Password field is required.")]
-        [MaxLength(50, ErrorMessage = "Maximum length for the Password is 50.")]
-        [MinLength(6, ErrorMessage = "Minimum length for the Password is 6.")]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
 
         [MaxLength(50, ErrorMessage = "Maximum length for the Name is 50.")]
         public string Name { get; set; }

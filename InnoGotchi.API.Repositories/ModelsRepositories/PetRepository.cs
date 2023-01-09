@@ -34,5 +34,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
         {
             return FindByCondition(p => p.Name == petName, trackChanges).FirstOrDefault();
         }
+
+        public void UpdatePet(Pet pet)
+        {
+            Update(pet);
+        }
     }
 }

@@ -7,7 +7,9 @@ namespace InnoGotchi.API.Validators
     {
         public FarmToCreateValidator()
         {
-            RuleFor(f => f.Name).NotEmpty().WithMessage("You did not enter a name.").MaximumLength(50).WithMessage("Name should not be longer than 50 characters.");
+            RuleFor(f => f.Name).NotEmpty().WithMessage("You did not enter a name.").MaximumLength(50)
+                .WithMessage("Name should not be longer than 50 characters.")
+                .Must(l => !l.Contains(" ")).WithMessage("Login must not contain spaces");
         }
     }
 }

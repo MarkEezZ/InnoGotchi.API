@@ -13,7 +13,7 @@ namespace InnoGotchi.API
                 .ForMember(u => u.IsInGame, opt => opt.MapFrom(src => true))
                 .ForMember(u => u.IsMusic, opt => opt.MapFrom(src => true));
             CreateMap<User, UserInfoDto>().ReverseMap();
-            CreateMap<BodyPartDto, Body>();
+            CreateMap<BodyDto, Body>();
             CreateMap<BodyPartDto, Eyes>();
             CreateMap<BodyPartDto, Mouth>();
             CreateMap<BodyPartDto, Nose>();

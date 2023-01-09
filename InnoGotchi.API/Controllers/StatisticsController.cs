@@ -20,7 +20,7 @@ namespace InnoGotchi.API.Controllers
             this.mapper = mapper;
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetFarmStatistics([FromRoute]string farmName)
         {
             var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);

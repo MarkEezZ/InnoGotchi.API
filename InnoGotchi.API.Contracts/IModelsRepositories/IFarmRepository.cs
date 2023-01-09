@@ -10,8 +10,10 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
 {
     public interface IFarmRepository
     {
+        IEnumerable<Farm> GetAllFarms(bool trackChanges);
         Farm GetFarmByFarmId(int farmId, bool trackChanges);
         Farm GetFarmByFarmName(string farmName, bool trackChanges);
         void CreateFarm(Farm farm);
+        void DeleteFarm(Farm farm);
     }
 }

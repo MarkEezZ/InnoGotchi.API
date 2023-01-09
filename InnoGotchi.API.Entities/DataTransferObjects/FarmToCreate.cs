@@ -8,7 +8,7 @@ namespace InnoGotchi.API.Entities.DataTransferObjects
 {
     public class FarmToCreate
     {
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public string Name { get; set; }
     }
 }

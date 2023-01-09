@@ -4,7 +4,12 @@ using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace InnoGotchi.API.Controllers
 {
@@ -15,12 +20,14 @@ namespace InnoGotchi.API.Controllers
         private readonly IRepositoryManager repository;
         private readonly ILoggerManager logger;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public UsersController (IRepositoryManager repository, IMapper mapper, ILoggerManager logger)
+        public UsersController (IRepositoryManager repository, IMapper mapper, ILoggerManager logger, IConfiguration configuration)
         {
             this.repository = repository;
             this.mapper = mapper;
             this.logger = logger;
+            this.configuration = configuration;
         }
 
         [HttpGet]
@@ -62,7 +69,7 @@ namespace InnoGotchi.API.Controllers
                 user.Name = userInfo.Name;
                 user.Surname = userInfo.Surname;
                 user.Email = userInfo.Email;
-                user.Password = userInfo.Password;
+                user.PasswordHash = createPasswordHash(userInfo.Password);
                 user.Age = userInfo.Age;
                 user.AvatarFileName = userInfo.AvatarFileName;
                 user.IsInGame = userInfo.IsInGame;
@@ -89,10 +96,7 @@ namespace InnoGotchi.API.Controllers
 
                 return Ok();
             }
-            else
-            {
-                return BadRequest($"The user with name \"{login}\" is not exist.");
-            }
+            return BadRequest($"The user with name \"{login}\" is not exist.");
         }
 
         [HttpPut("{login}/left")]
@@ -108,31 +112,30 @@ namespace InnoGotchi.API.Controllers
 
                 return Ok();
             }
-            else
-            {
-                return BadRequest($"The user with name \"{login}\" is not exist.");
-            }
+            return BadRequest($"The user with name \"{login}\" is not exist.");
         }
 
-        [HttpPost("authorization")]
-        public IActionResult AuthorizeUser([FromBody]UserForAuthorizationDto userData)
+        [HttpDelete("remove")]
+        public IActionResult DeleteUser([FromBody]Guid userId)
         {
-            var user = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
-            if (user == null)
+            var userToDelete = repository.User.GetUserById(userId, trackChanges: false);
+            string userName = userToDelete.Login;
+
+            if (userToDelete != null)
             {
-                return NotFound($"The user with login \"{userData.Login}\" is not found.");
-            }
-            else
-            {
-                if (user.Password == userData.Password)
+                Owners ownerRecord = repository.Owners.GetOwnFarmByUserId(userToDelete.Id, trackChanges: false);
+                if (ownerRecord != null)
                 {
-                    return Ok(user);
+                    var farm = repository.Farm.GetFarmByFarmId(ownerRecord.FarmId, trackChanges: false);
+                    repository.Farm.DeleteFarm(farm);
+                    repository.Owners.RemoveFarmOwner(ownerRecord);
                 }
-                else
-                {
-                    return BadRequest("Invalid password.");
-                }
+
+                repository.User.DeleteUser(userToDelete);
+                repository.Save();
+                return Ok($"The user \"{userName}\" was sucsessfuly deleted.");
             }
+            return NotFound("The user is not found.");
         }
 
         [HttpPost("registration")]
@@ -141,32 +144,68 @@ namespace InnoGotchi.API.Controllers
             var sameUser = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
             if (sameUser == null)
             {
-                var user = mapper.Map<User>(userData);
-                repository.User.CreateUserByRegData(user);
+                User user = mapper.Map<User>(userData);
+                user.PasswordHash = createPasswordHash(userData.Password);
+                repository.User.CreateUser(user);
                 repository.Save();
 
                 var userToReturn = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
                 return CreatedAtRoute("GetByLogin", routeValues: new { login = userToReturn.Login }, value: userToReturn);
             }
+            return BadRequest("The user with this login already exists.");
+        }
+
+        [HttpPost("authorization")]
+        public IActionResult AuthorizeUser([FromBody] UserForAuthorizationDto userData)
+        {
+            var user = repository.User.GetUserByLogin(userData.Login, trackChanges: false);
+            if (user == null)
+            {
+                return NotFound($"The user with login \"{userData.Login}\" is not found.");
+            }
             else
             {
-                return BadRequest("The user with this login already exists.");
+                string passwordHash = createPasswordHash(userData.Password);
+
+                if (user.PasswordHash == passwordHash)
+                {
+                    string token = createToken(user);
+                    return Ok(token);
+                }
+                return BadRequest("Invalid password.");
             }
         }
 
-        [HttpDelete("remove")]
-        public IActionResult DeleteUser([FromBody]int userId)
+        private string createToken(User user)
         {
-            var userToDelete = repository.User.GetUserById(userId, trackChanges: false);
-            if (userToDelete != null)
+            List<Claim> claims = new List<Claim>
             {
-                repository.User.DeleteUser(userToDelete);
-                repository.Save();
-                return Ok($"The user with ID \"{userId}\" was sucsessfuly deleted.");
-            }
-            else
+                new Claim(type: "Id", user.Id.ToString()),
+                new Claim(type: "Login", user.Login)
+            };
+
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("Secret").Value));
+            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken 
+            (
+                claims: claims, 
+                expires: DateTime.Now.AddDays(1), 
+                signingCredentials: credentials
+            );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+
+        private string createPasswordHash(string password)
+        {
+            byte[] passwordBytes = Encoding.ASCII.GetBytes(password);
+            using (var hmacsha512 = new HMACSHA512(passwordBytes))
             {
-                return NotFound("The user is not found.");
+                byte[] passwordHash = hmacsha512.ComputeHash(passwordBytes);
+                return Convert.ToBase64String(passwordHash);
             }
         }
     }

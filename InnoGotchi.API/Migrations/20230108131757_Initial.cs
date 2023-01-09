@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InnoGotchi.API.Migrations
 {
-    public partial class CreateDatabase : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -80,18 +80,50 @@ namespace InnoGotchi.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Settings",
+                name: "Users",
                 columns: table => new
                 {
-                    SettingsId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Login = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Surname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Age = table.Column<int>(type: "int", nullable: true),
+                    LastEntry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastExit = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AvatarFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsInGame = table.Column<bool>(type: "bit", nullable: false),
                     IsMusic = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Settings", x => x.SettingsId);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Statistics",
+                columns: table => new
+                {
+                    StatisticsId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AlivePetsCount = table.Column<int>(type: "int", nullable: false),
+                    DeadPetsCount = table.Column<int>(type: "int", nullable: false),
+                    AverageFeedingPeriod = table.Column<int>(type: "int", nullable: false),
+                    AverageThirstPeriod = table.Column<int>(type: "int", nullable: false),
+                    AverageHappinessPeriod = table.Column<int>(type: "int", nullable: false),
+                    AverageAge = table.Column<int>(type: "int", nullable: false),
+                    FarmId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Statistics", x => x.StatisticsId);
+                    table.ForeignKey(
+                        name: "FK_Statistics_Farms_FarmId",
+                        column: x => x.FarmId,
+                        principalTable: "Farms",
+                        principalColumn: "FarmId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,10 +134,7 @@ namespace InnoGotchi.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
-                    thirstyLevel = table.Column<int>(type: "int", nullable: true),
-                    hungerLevel = table.Column<int>(type: "int", nullable: true),
-                    healthLevel = table.Column<int>(type: "int", nullable: true),
-                    moodLevel = table.Column<int>(type: "int", nullable: true),
+                    TimeOfCreating = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BodyId = table.Column<int>(type: "int", nullable: false),
                     EyesId = table.Column<int>(type: "int", nullable: false),
                     NoseId = table.Column<int>(type: "int", nullable: true),
@@ -147,38 +176,12 @@ namespace InnoGotchi.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Login = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Surname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Age = table.Column<int>(type: "int", nullable: true),
-                    LastEntry = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastExit = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SettingsId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_Settings_SettingsId",
-                        column: x => x.SettingsId,
-                        principalTable: "Settings",
-                        principalColumn: "SettingsId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Guests",
                 columns: table => new
                 {
                     GuestsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FarmId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -204,7 +207,7 @@ namespace InnoGotchi.API.Migrations
                 {
                     OwnersId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FarmId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -255,15 +258,6 @@ namespace InnoGotchi.API.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Farms",
-                columns: new[] { "FarmId", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Dungeon" },
-                    { 2, "AWP Lego" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Mouthes",
                 columns: new[] { "MouthId", "FileName", "Name" },
                 values: new object[,]
@@ -286,47 +280,6 @@ namespace InnoGotchi.API.Migrations
                     { 3, "nose_anime.png", "Anime Nose" },
                     { 4, "nose_egg.png", "Egg Nose" },
                     { 5, "nose_sharp.png", "Sharp Nose" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Settings",
-                columns: new[] { "SettingsId", "AvatarFileName", "IsInGame", "IsMusic" },
-                values: new object[] { 1, "ava_default.png", true, true });
-
-            migrationBuilder.InsertData(
-                table: "Pets",
-                columns: new[] { "PetId", "Age", "BodyId", "EyesId", "FarmId", "MouthId", "Name", "NoseId", "healthLevel", "hungerLevel", "moodLevel", "thirstyLevel" },
-                values: new object[,]
-                {
-                    { 1, 0, 5, 1, 1, 2, "Dungeon Master", 5, null, null, null, null },
-                    { 2, 0, 8, 4, 2, 3, "Grossmeister", 4, null, null, null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "UserId", "Age", "Email", "LastEntry", "LastExit", "Login", "Name", "Password", "SettingsId", "Surname" },
-                values: new object[,]
-                {
-                    { 1, 19, "goog55776@gmail.com", null, null, "MarkEezZ", "Mark", "qwe123", 1, "Lovyagin" },
-                    { 2, null, "goog55776x2@gmail.com", new DateTime(2022, 11, 9, 18, 22, 24, 0, DateTimeKind.Unspecified), new DateTime(2022, 11, 9, 19, 42, 34, 0, DateTimeKind.Unspecified), "Lenon123", "John", "asd456", 1, "Lenon" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Guests",
-                columns: new[] { "GuestsId", "FarmId", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 2, 1 },
-                    { 2, 1, 2 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Owners",
-                columns: new[] { "OwnersId", "FarmId", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 1, 1 },
-                    { 2, 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -375,9 +328,9 @@ namespace InnoGotchi.API.Migrations
                 column: "NoseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_SettingsId",
-                table: "Users",
-                column: "SettingsId");
+                name: "IX_Statistics_FarmId",
+                table: "Statistics",
+                column: "FarmId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -392,6 +345,9 @@ namespace InnoGotchi.API.Migrations
                 name: "Pets");
 
             migrationBuilder.DropTable(
+                name: "Statistics");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
@@ -401,16 +357,13 @@ namespace InnoGotchi.API.Migrations
                 name: "Eyes");
 
             migrationBuilder.DropTable(
-                name: "Farms");
-
-            migrationBuilder.DropTable(
                 name: "Mouthes");
 
             migrationBuilder.DropTable(
                 name: "Noses");
 
             migrationBuilder.DropTable(
-                name: "Settings");
+                name: "Farms");
         }
     }
 }

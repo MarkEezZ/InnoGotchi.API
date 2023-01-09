@@ -21,8 +21,19 @@ namespace InnoGotchi.API.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet("own-farm")]
-        public IActionResult GetUserOwnFarm([FromBody]int userId)
+        [HttpGet]
+        public IActionResult GetAllFarms()
+        {
+            var farms = repository.Farm.GetAllFarms(trackChanges: false);
+            if (farms != null)
+            {
+                return Ok(farms);
+            }
+            return BadRequest("Farms are not found");
+        }
+
+        [HttpPost("own-farm")]
+        public IActionResult GetUserOwnFarm([FromBody] Guid userId)
         {
             var ownFarmRecord = repository.Owners.GetOwnFarmByUserId(userId, trackChanges: false);
             if (ownFarmRecord != null)
@@ -33,8 +44,8 @@ namespace InnoGotchi.API.Controllers
             return NotFound("The user does not have his own farm yet.");
         }
 
-        [HttpGet("guest-farms")]
-        public IActionResult GetUserGuestFarms([FromBody]int userId)
+        [HttpPost("guest-farms")]
+        public IActionResult GetUserGuestFarms([FromBody] Guid userId)
         {
             var guestFarmRecords = repository.Guests.GetGuestFarmsByUserId(userId, trackChanges: false);
             if (guestFarmRecords != null)
@@ -42,7 +53,7 @@ namespace InnoGotchi.API.Controllers
                 List<Farm> guestFarms = new List<Farm>();
                 foreach (Guests guestFarmRecord in guestFarmRecords)
                 {
-                    var farm = repository.Farm.GetFarmByFarmId(guestFarmRecord.Id, trackChanges: false);
+                    var farm = repository.Farm.GetFarmByFarmId(guestFarmRecord.FarmId, trackChanges: false);
                     guestFarms.Add(farm);
                 }
                 return Ok(guestFarms);
@@ -50,8 +61,8 @@ namespace InnoGotchi.API.Controllers
             return NotFound("The user does not have farms he is invited at.");
         }
 
-        [HttpPost("creation")]
-        public IActionResult CreateFarm([FromBody]FarmToCreate farmData)
+        [HttpPost("create")]
+        public IActionResult CreateFarm([FromBody] FarmToCreate farmData)
         {
             var ownFarm = repository.Owners.GetOwnFarmByUserId(farmData.UserId, trackChanges: false);
             if (ownFarm == null)
@@ -70,6 +81,12 @@ namespace InnoGotchi.API.Controllers
                 statistics.AverageAge = 0;
                 statistics.FarmId = farmForStatistics.Id;
                 repository.Statistics.CreateStatistics(statistics);
+                repository.Save();
+
+                Owners owner = new Owners();
+                owner.UserId = farmData.UserId;
+                owner.FarmId = farmForStatistics.Id;
+                repository.Owners.AddFarmOwner(owner);
                 repository.Save();
 
                 var farmToReturn = repository.Farm.GetFarmByFarmName(farmData.Name, trackChanges: false);

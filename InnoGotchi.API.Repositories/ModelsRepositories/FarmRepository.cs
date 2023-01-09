@@ -21,6 +21,16 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             Create(farm);
         }
 
+        public void DeleteFarm(Farm farm)
+        {
+            Delete(farm);
+        }
+
+        public IEnumerable<Farm> GetAllFarms(bool trackChanges)
+        {
+            return FindAll(trackChanges: false).ToList();
+        }
+
         public Farm GetFarmByFarmId(int farmId, bool trackChanges)
         {
             return FindByCondition(f => f.Id == farmId, trackChanges).FirstOrDefault();

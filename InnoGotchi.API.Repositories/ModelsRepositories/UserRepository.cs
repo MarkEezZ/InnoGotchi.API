@@ -19,10 +19,10 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
 
         public IEnumerable<User> GetAllUsers(bool trackChanges)
         {
-            return FindAll(trackChanges: false).OrderBy(u => u.Id).ToList();
+            return FindAll(trackChanges: false).ToList();
         }
 
-        public void CreateUserByRegData(User user)
+        public void CreateUser(User user)
         {
             Create(user);
         }
@@ -37,7 +37,7 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             return FindByCondition(u => u.Login == login, trackChanges).FirstOrDefault();
         }
 
-        public User GetUserById(int userId, bool trackChanges)
+        public User GetUserById(Guid userId, bool trackChanges)
         {
             return FindByCondition(u => u.Id == userId, trackChanges).FirstOrDefault();
         }

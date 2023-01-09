@@ -23,12 +23,6 @@ namespace InnoGotchi.API.Entities
             modelBuilder.ApplyConfiguration(new NoseConfiguration());
             modelBuilder.ApplyConfiguration(new EyesConfiguration());
             modelBuilder.ApplyConfiguration(new MouthConfiguration());
-            modelBuilder.ApplyConfiguration(new FarmConfiguration());
-            modelBuilder.ApplyConfiguration(new PetConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new GuestsConfiguration());
-            modelBuilder.ApplyConfiguration(new OwnersConfiguration());
-            modelBuilder.ApplyConfiguration(new StatisticsConfiguration());
         }
 
         public DbSet<Body> Bodies { get; set; }

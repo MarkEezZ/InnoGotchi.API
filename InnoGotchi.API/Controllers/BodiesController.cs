@@ -40,6 +40,7 @@ namespace InnoGotchi.API.Controllers
             if (sameBody == null)
             {
                 var body = mapper.Map<Body>(bodyToCreate);
+                Console.WriteLine(JsonSerializer.Serialize(body));
                 repository.Body.CreateBody(body);
                 repository.Save();
 

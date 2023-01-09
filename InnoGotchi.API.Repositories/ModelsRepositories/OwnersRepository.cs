@@ -20,9 +20,19 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             Create(record);
         }
 
-        public Owners GetOwnFarmByUserId(int userId, bool trackChanges)
+        public void RemoveFarmOwner(Owners record)
+        {
+            Delete(record);
+        }
+
+        public Owners GetOwnFarmByUserId(Guid userId, bool trackChanges)
         {
             return FindByCondition(u => u.UserId == userId, trackChanges).FirstOrDefault();
+        }
+
+        public Owners GetUserByOwnFarmId(int farmId, bool trackChanges)
+        {
+            return FindByCondition(r => r.FarmId == farmId, trackChanges).FirstOrDefault();
         }
     }
 }

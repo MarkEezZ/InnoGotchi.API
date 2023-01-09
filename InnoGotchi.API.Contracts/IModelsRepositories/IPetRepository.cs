@@ -13,5 +13,6 @@ namespace InnoGotchi.API.Contracts.IModelsRepositories
         IEnumerable<Pet> GetAllFarmPets(int farmId, bool trackChanges);
         Pet GetPetByName(string petName, bool trackChanges);
         void DeletePet(Pet pet);
+        void UpdatePet(Pet pet);
     }
 }
