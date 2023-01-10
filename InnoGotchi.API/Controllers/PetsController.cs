@@ -1,15 +1,14 @@
 ﻿using InnoGotchi.API.Entities.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InnoGotchi.API.Controllers
 {
     [ApiController]
-    [Route("api/farms/{farmName}/pets")]
+    [Route("innogotchi/farms/{farmName}/pets")]
     public class PetsController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -24,22 +23,20 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetFarmPets([FromRoute] string farmName)
         {
             var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
+            var pets = repository.Pet.GetAllFarmPets(farm.Id, trackChanges: false);
+            if (pets != null)
             {
-                var pets = repository.Pet.GetAllFarmPets(farm.Id, trackChanges: false);
-                if (pets != null)
-                {
-                    return Ok(pets);
-                }
-                return Ok("There is no pets on the farm.");
+                return Ok(pets);
             }
-            return BadRequest($"There is no farm with name \"{farmName}\".");
+            return Ok();
         }
 
         [HttpGet("{petName}", Name = "GetPetByName")]
+        [Authorize]
         public IActionResult GetPetByName([FromRoute] string petName)
         {
             var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
@@ -47,81 +44,118 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(pet);
             }
-            return BadRequest($"There is no pet with name \"{petName}\" on this farm.");
+            return NotFound($"Pet with name \"{petName}\" is not found.");
+        }
+
+        [HttpPatch("{petName}/feed")]
+        [Authorize]
+        public IActionResult FeedPet([FromRoute] string petName)
+        {
+            var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+            if (pet != null)
+            {
+                pet.LastEatTime = DateTime.Now;
+                repository.Pet.UpdatePet(pet);
+                repository.Save();
+                return Ok();
+            }
+            return NotFound($"Pet with name \"{petName}\" is not found.");
+        }
+
+        [HttpPatch("{petName}/water")]
+        [Authorize]
+        public IActionResult WaterPet([FromRoute] string petName)
+        {
+            var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+            if (pet != null)
+            {
+                pet.LastDrinkTime = DateTime.Now;
+                repository.Pet.UpdatePet(pet);
+                repository.Save();
+                return Ok();
+            }
+            return NotFound($"Pet with name \"{petName}\" is not found.");
+        }
+
+        [HttpPatch("{petName}/cure")]
+        [Authorize]
+        public IActionResult CurePet([FromRoute] string petName)
+        {
+            var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+            if (pet != null)
+            {
+                pet.LastHealthTime = DateTime.Now;
+                repository.Pet.UpdatePet(pet);
+                repository.Save();
+                return Ok();
+            }
+            return NotFound($"Pet with name \"{petName}\" is not found.");
+        }
+
+        [HttpPatch("{petName}/cheer-up")]
+        [Authorize]
+        public IActionResult CheerUpPet([FromRoute] string petName)
+        {
+            var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+            if (pet != null)
+            {
+                pet.LastMoodTime = DateTime.Now;
+                repository.Pet.UpdatePet(pet);
+                repository.Save();
+                return Ok();
+            }
+            return NotFound($"Pet with name \"{petName}\" is not found.");
         }
 
         [HttpPost("constructor")]
+        [Authorize]
         public IActionResult CreatePet([FromRoute] string farmName, [FromBody] PetDto petData)
         {
-            var samePet = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
-            if (samePet == null)
-            {
-                Pet pet = mapper.Map<Pet>(petData);
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
 
-                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-                if (farm != null)
+            if (farmName == userClaims.OwnFarm)
+            {
+                var samePet = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
+                if (samePet == null)
                 {
+                    var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
+
+                    Pet pet = mapper.Map<Pet>(petData);
+                    DateTime now = DateTime.Now;
+
+                    pet.LastDrinkTime = now;
+                    pet.LastEatTime = now;
+                    pet.LastHealthTime = now;
+                    pet.LastMoodTime = now;
                     pet.FarmId = farm.Id;
                     pet.TimeOfCreating = DateTime.Now;
-                    repository.Pet.CreatePet(pet);  
+
+                    repository.Pet.CreatePet(pet);
                     repository.Save();
 
                     var petFromDb = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
                     return CreatedAtRoute("GetPetByName", routeValues: new { petName = petFromDb.Name }, value: petFromDb);
                 }
+                return BadRequest("This name is already taken.");
             }
-            return BadRequest("This name is already taken.");
+            return Forbid("You have no rights to create a pet on someone else's farm");
         }
 
-        [HttpPut("{petName}/update")]
-        public IActionResult UpdatePet([FromRoute] string farmName, [FromRoute] string petName, [FromBody] PetDto petData)
+        [HttpDelete("delete")]
+        [Authorize]
+        public IActionResult DeletePet([FromRoute] string farmName, [FromBody] string petName)
         {
-            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+
+            if (farmName == userClaims.OwnFarm)
             {
                 var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
-                if (pet != null)
-                {
-                    if (pet.FarmId == farm.Id)
-                    {
-                        pet.Name = petData.Name;
-                        pet.MouthId = petData.MouthId;
-                        pet.NoseId = petData.NoseId;
-                        pet.BodyId = petData.BodyId;
-                        pet.EyesId = petData.EyesId;
+                repository.Pet.DeletePet(pet);
+                repository.Save();
 
-                        repository.Pet.UpdatePet(pet);
-                        repository.Save();
-
-                        return Ok("Pet was sucsessfuly updated.");
-                    }
-                    return Forbid("You have no rights to update pets from not your farm.");
-                }
-                return NotFound($"There is no pet with name \"{petName}\".");
+                return Ok("Pet was successfuly deleted.");
             }
-            return NotFound($"Farm with name {farmName} is not found.");
-        }
-
-        [HttpDelete("remove")]
-        public IActionResult DeletePet([FromRoute] string farmName, [FromBody] PetDto petData)
-        {
-            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
-            {
-                var pet = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
-                if (pet != null)
-                {
-                    if (pet.FarmId == farm.Id)
-                    {
-                        repository.Pet.DeletePet(pet);
-                        repository.Save();
-                        return Ok("Pet was sucsessfuly deleted");
-                    }
-                    return NotFound($"There is no pet with name \"{pet.Name}\" on the farm.");
-                }
-                return BadRequest($"There is no pet with name \"{petData.Name}\".");
-            }
-            return BadRequest($"There is no farm with name \"{farmName}\".");
+            return Forbid("You have no rights to delete a pet from someone else's farm.");
         }
     }
 }

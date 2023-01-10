@@ -2,14 +2,16 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Json;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/bodies")]
+    [Route("innogotchi/bodies")]
     [ApiController]
+    [Authorize]
     public class BodiesController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -22,7 +24,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBodies()
+        public IActionResult GetAllBodies()
         {
             var bodies = repository.Body.GetAllBodies(trackChanges: false);
             if (bodies != null)
@@ -33,24 +35,24 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateBody([FromBody]BodyDto bodyToCreate)
+        [Authorize(Policy = "Admin")]
+        public IActionResult CreateBody([FromBody] BodyDto bodyToCreate)
         {
-            Console.WriteLine(JsonSerializer.Serialize(bodyToCreate));
             var sameBody = repository.Body.GetBodyByName(bodyToCreate.Name, trackChanges: false);
             if (sameBody == null)
             {
                 var body = mapper.Map<Body>(bodyToCreate);
-                Console.WriteLine(JsonSerializer.Serialize(body));
                 repository.Body.CreateBody(body);
                 repository.Save();
 
-                return Ok("Body was successfuly added.");
+                return Ok("Body was successfuly created.");
             }
             return BadRequest($"Body with name \"{bodyToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
-        public IActionResult DeleteBody([FromBody]BodyDto bodyToDelete)
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteBody([FromBody] BodyDto bodyToDelete)
         {
             var body = repository.Body.GetBodyByName(bodyToDelete.Name, trackChanges: false);
             if (body != null)

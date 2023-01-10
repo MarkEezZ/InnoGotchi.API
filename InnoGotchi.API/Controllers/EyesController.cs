@@ -2,13 +2,15 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+
 
 namespace InnoGotchi.API.Controllers
 {
     [Route("api/eyes")]
     [ApiController]
+    [Authorize]
     public class EyesController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -21,18 +23,19 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetEyes()
+        public IActionResult GetAllEyes()
         {
             var eyes = repository.Eyes.GetAllEyes(trackChanges: false);
             if (eyes != null)
             {
                 return Ok(eyes);
             }
-            return NotFound("Eyes are not found.");
+            return Ok();
         }
 
         [HttpPost]
-        public IActionResult CreateEyes([FromBody]BodyPartDto eyesToCreate)
+        [Authorize(Policy = "Admin")]
+        public IActionResult CreateEyes([FromBody] BodyPartDto eyesToCreate)
         {
             var sameEyes = repository.Eyes.GetEyesByName(eyesToCreate.Name, trackChanges: false);
             if (sameEyes == null)
@@ -41,13 +44,14 @@ namespace InnoGotchi.API.Controllers
                 repository.Eyes.CreateEyes(eyes);
                 repository.Save();
 
-                return Ok("Eyes was successfuly added.");
+                return Ok("Eyes was successfuly created.");
             }
             return BadRequest($"Eyes with name \"{eyesToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
-        public IActionResult DeleteEyes([FromBody]BodyPartDto eyesToDelete)
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteEyes([FromBody] BodyPartDto eyesToDelete)
         {
             var eyes = repository.Eyes.GetEyesByName(eyesToDelete.Name, trackChanges: false);
             if (eyes != null)

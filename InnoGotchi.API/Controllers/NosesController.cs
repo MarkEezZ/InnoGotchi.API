@@ -2,13 +2,15 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/noses")]
+    [Route("innogotchi/noses")]
     [ApiController]
+    [Authorize]
     public class NosesController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -21,7 +23,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetNoses()
+        public IActionResult GetAllNoses()
         {
             var noses = repository.Nose.GetAllNoses(trackChanges: false);
             if (noses != null)
@@ -32,9 +34,9 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNose([FromBody]BodyPartDto noseToCreate)
+        [Authorize(Policy = "Admin")]
+        public IActionResult CreateNose([FromBody] BodyPartDto noseToCreate)
         {
-            Console.WriteLine($"\n\n{JsonSerializer.Serialize(noseToCreate)}\n\n");
             var sameNose = repository.Nose.GetNoseByName(noseToCreate.Name, trackChanges: false);
             if (sameNose == null)
             {
@@ -42,13 +44,14 @@ namespace InnoGotchi.API.Controllers
                 repository.Nose.CreateNose(nose);
                 repository.Save();
 
-                return Ok("Nose was successfuly added.");
+                return Ok("Nose was successfuly created.");
             }
             return BadRequest($"Nose with name \"{noseToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
-        public IActionResult DeleteNose([FromBody]BodyPartDto noseToDelete)
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteNose([FromBody] BodyPartDto noseToDelete)
         {
             var nose = repository.Nose.GetNoseByName(noseToDelete.Name, trackChanges: false);
             if (nose != null)

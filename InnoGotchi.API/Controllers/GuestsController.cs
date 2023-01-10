@@ -2,12 +2,14 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
     [ApiController]
-    [Route("api/farms/{farmName}/guests")]
+    [Route("innogotchi/farms/{farmName}/guests")]
+    [Authorize]
     public class GuestsController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -22,11 +24,13 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllFarmGuests([FromRoute]string farmName)
+        public IActionResult GetAllFarmGuests([FromRoute] string farmName)
         {
-            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+
+            if (farmName == userClaims.OwnFarm)
             {
+                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var guestsRecords = repository.Guests.GetGuestsByFarmId(farm.Id, trackChanges: false);
                 if (guestsRecords != null)
                 {
@@ -39,68 +43,23 @@ namespace InnoGotchi.API.Controllers
                     }
                     return Ok(guests);
                 }
-                return Ok("There is no invited friends on this farm.");
+                return Ok();
             }
-            return BadRequest($"There is no farm with name \"{farmName}\".");
-        }
-
-        [HttpGet("users")]
-        public IActionResult GetAllUsersToInvite([FromRoute]string farmName)
-        {
-            var users = repository.User.GetAllUsers(trackChanges: false);
-            if (users != null)
-            {
-                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-                var farmGuestsRecords = repository.Guests.GetGuestsByFarmId(farm.Id, trackChanges: false);
-                var farmOwnerRecord = repository.Owners.GetUserByOwnFarmId(farm.Id, trackChanges: false);
-
-                List<User> usersToReturn = new List<User>();
-                foreach (User user in users)
-                {
-                    if (farmOwnerRecord.UserId != user.Id)
-                    {
-                        if (farmGuestsRecords != null)
-                        {
-                            bool isGuest = false;
-                            foreach (Guests guestsRecord in farmGuestsRecords)
-                            {
-                                if (guestsRecord.UserId == user.Id)
-                                {
-                                    isGuest = true;
-                                    break;
-                                }
-                            }
-                            if (!isGuest)
-                            {
-                                usersToReturn.Add(user);
-                            }
-                        }
-                        else
-                        {
-                            usersToReturn.Add(user);
-                        }
-                    }
-                }
-                List<GuestInfo> usersInfoToReturn = new List<GuestInfo>();
-                foreach (User user in usersToReturn)
-                {
-                    var userInfoToReturn = mapper.Map<GuestInfo>(user);
-                    usersInfoToReturn.Add(userInfoToReturn);
-                }
-                return Ok(usersInfoToReturn);
-            }
-            return NotFound("Users was not found.");
+            return Forbid("You have no rights to get someone else's farm guests.");
         }
 
         [HttpPost("invite")]
-        public IActionResult InviteGuest([FromRoute]string farmName, [FromBody]GuestInfo userInfo)
+        public IActionResult InviteGuest([FromRoute] string farmName, [FromBody] GuestInfo userInfo)
         {
-            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+
+            if (farmName == userClaims.OwnFarm)
             {
+                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var user = repository.User.GetUserByLogin(userInfo.Login, trackChanges: false);
                 var guestRecord = repository.Guests.GetGuestByUserAndFarm(user.Id, farm.Id, trackChanges: false);
-                if (guestRecord == null) 
+
+                if (guestRecord == null)
                 {
                     var futureGuest = repository.User.GetUserByLogin(userInfo.Login, trackChanges: false);
                     Guests guest = new Guests();
@@ -111,17 +70,19 @@ namespace InnoGotchi.API.Controllers
 
                     return Ok("Guest was successfuly invited.");
                 }
-                return BadRequest("Htis guest already invited on the farm.");
+                return BadRequest("This guest already invited on the farm.");
             }
-            return BadRequest($"There is no farm with name \"{farmName}\".");
+            return Forbid("You have no rights to invite guests to someone else's farm.");
         }
 
         [HttpDelete("delete")]
-        public IActionResult DeleteGuest([FromRoute]string farmName, [FromBody]GuestInfo guestInfo)
+        public IActionResult DeleteGuest([FromRoute] string farmName, [FromBody] GuestInfo guestInfo)
         {
-            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-            if (farm != null)
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+
+            if (farmName == userClaims.OwnFarm)
             {
+                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var guest = repository.User.GetUserByLogin(guestInfo.Login, trackChanges: false);
                 if (guest != null)
                 {
@@ -131,9 +92,72 @@ namespace InnoGotchi.API.Controllers
 
                     return Ok("Guest has been successfuly deleted.");
                 }
-                return NotFound("The guest you are trying to delete is not found.");
+                return BadRequest($"This user is not a guest of the farm \"{farm.Name}\".");
             }
-            return BadRequest($"There is no farm with name \"{farmName}\".");
+            return Forbid("You have no rights to invite guests to someone else's farm.");
+        }
+
+
+        [HttpGet("users")]
+        public IActionResult GetAllUsersToInvite([FromRoute] string farmName)
+        {
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+
+            if (farmName == userClaims.OwnFarm)
+            {
+                var users = repository.User.GetAllUsers(trackChanges: false);
+                if (users != null)
+                {
+                    var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
+                    var usersToCalc = users.ToList();
+                    var farmGuestsRecords = repository.Guests.GetGuestsByFarmId(farm.Id, trackChanges: false).ToList();
+                    var farmOwnerRecord = repository.Owners.GetUserByOwnFarmId(farm.Id, trackChanges: false);
+
+                    List<GuestInfo> usersInfoToReturn = selectUsers(usersToCalc, farmGuestsRecords, farmOwnerRecord);
+                    return Ok(usersInfoToReturn);
+                }
+                return Ok();
+            }
+            return Forbid("You have no rights to try invite guests to someone else's farm.");
+        }
+
+
+        private List<GuestInfo> selectUsers(List<User> users, List<Guests> farmGuestsRecords, Owners farmOwnerRecord)
+        {
+            List<User> usersToReturn = new List<User>();
+            foreach (User user in users)
+            {
+                if (farmOwnerRecord.UserId != user.Id)
+                {
+                    if (farmGuestsRecords != null)
+                    {
+                        bool isGuest = false;
+                        foreach (Guests guestsRecord in farmGuestsRecords)
+                        {
+                            if (guestsRecord.UserId == user.Id)
+                            {
+                                isGuest = true;
+                                break;
+                            }
+                        }
+                        if (!isGuest)
+                        {
+                            usersToReturn.Add(user);
+                        }
+                    }
+                    else
+                    {
+                        usersToReturn.Add(user);
+                    }
+                }
+            }
+            List<GuestInfo> usersInfoToReturn = new List<GuestInfo>();
+            foreach (User user in usersToReturn)
+            {
+                var userInfoToReturn = mapper.Map<GuestInfo>(user);
+                usersInfoToReturn.Add(userInfoToReturn);
+            }
+            return usersInfoToReturn;
         }
     }
 }

@@ -2,11 +2,11 @@
 
 namespace InnoGotchi.API.Extensions
 {
-    public static class CustomExceptionHandlerMiddlewareExtentions
+    public static class ExceptionHandlerMiddlewareExtention
     {
         public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<CustomExceptionHandlerMiddleware>();
+            return builder.UseMiddleware<ExceptionHandlerMiddleware>();
         }
     }
 }

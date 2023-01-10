@@ -21,29 +21,28 @@ namespace InnoGotchi.API.Entities.Models
         public int Age { get; set; }
 
         public DateTime TimeOfCreating { get; set; }
+        public DateTime LastEatTime { get; set; }
+        public DateTime LastDrinkTime { get; set; }
+        public DateTime LastHealthTime { get; set; }
+        public DateTime LastMoodTime { get; set; }
 
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }
-        public Body Body { get; set; }
 
 
         [ForeignKey(nameof(Eyes))]
         public int EyesId { get; set; }
-        public Eyes Eyes { get; set; }
 
 
         [ForeignKey(nameof(Nose))]
         public int? NoseId { get; set; }
-        public Nose Nose { get; set; }
 
 
         [ForeignKey(nameof(Mouth))]
         public int MouthId { get; set; }
-        public Mouth Mouth { get; set; }
 
 
         [ForeignKey(nameof(Farm))]
         public int FarmId { get; set; }
-        public Farm Farm { get; set; }
     }
 }

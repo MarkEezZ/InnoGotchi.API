@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace InnoGotchi.API.Entities.DataTransferObjects
 {
-    public class FarmToCreate
+    public static class Roles
     {
-        public string Name { get; set; }
+        public static string ADMIN = "admin";
+        public static string USER = "user";
     }
 }

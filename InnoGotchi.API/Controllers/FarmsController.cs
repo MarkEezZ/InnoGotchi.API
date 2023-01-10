@@ -2,12 +2,15 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using InnoGotchi.API.Entities.Static;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
     [ApiController]
-    [Route("api/farms")]
+    [Route("innogotchi/farms")]
+    [Authorize]
     public class FarmsController : ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -22,6 +25,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "Admin")]
         public IActionResult GetAllFarms()
         {
             var farms = repository.Farm.GetAllFarms(trackChanges: false);
@@ -29,25 +33,29 @@ namespace InnoGotchi.API.Controllers
             {
                 return Ok(farms);
             }
-            return BadRequest("Farms are not found");
+            return Ok();
         }
 
-        [HttpPost("own-farm")]
-        public IActionResult GetUserOwnFarm([FromBody] Guid userId)
+        [HttpGet("own-farm")]
+        public IActionResult GetUserOwnFarm()
         {
-            var ownFarmRecord = repository.Owners.GetOwnFarmByUserId(userId, trackChanges: false);
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var ownFarmRecord = repository.Owners.GetOwnFarmByUserId(userClaims.Id, trackChanges: false);
+
             if (ownFarmRecord != null)
             {
-                var ownFarm = repository.Farm.GetFarmByFarmId(ownFarmRecord.Id, trackChanges: false);
+                var ownFarm = repository.Farm.GetFarmByFarmId(ownFarmRecord.FarmId, trackChanges: false);
                 return Ok(ownFarm);
             }
             return NotFound("The user does not have his own farm yet.");
         }
 
-        [HttpPost("guest-farms")]
-        public IActionResult GetUserGuestFarms([FromBody] Guid userId)
+        [HttpGet("guest-farms")]
+        public IActionResult GetUserGuestFarms()
         {
-            var guestFarmRecords = repository.Guests.GetGuestFarmsByUserId(userId, trackChanges: false);
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var guestFarmRecords = repository.Guests.GetGuestFarmsByUserId(userClaims.Id, trackChanges: false);
+
             if (guestFarmRecords != null)
             {
                 List<Farm> guestFarms = new List<Farm>();
@@ -64,7 +72,8 @@ namespace InnoGotchi.API.Controllers
         [HttpPost("create")]
         public IActionResult CreateFarm([FromBody] FarmToCreate farmData)
         {
-            var ownFarm = repository.Owners.GetOwnFarmByUserId(farmData.UserId, trackChanges: false);
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var ownFarm = repository.Owners.GetOwnFarmByUserId(userClaims.Id, trackChanges: false);
             if (ownFarm == null)
             {
                 Farm farm = mapper.Map<Farm>(farmData);
@@ -72,19 +81,15 @@ namespace InnoGotchi.API.Controllers
                 repository.Save();
 
                 var farmForStatistics = repository.Farm.GetFarmByFarmName(farmData.Name, trackChanges: false);
-                Statistics statistics = new Statistics();
-                statistics.AlivePetsCount = 0;
-                statistics.DeadPetsCount = 0;
-                statistics.AverageFeedingPeriod = 0;
-                statistics.AverageThirstPeriod = 0;
-                statistics.AverageHappinessPeriod = 0;
-                statistics.AverageAge = 0;
+
+                StatisticsBase baseStatistics = new StatisticsBase();
+                Statistics statistics = mapper.Map<Statistics>(baseStatistics);
                 statistics.FarmId = farmForStatistics.Id;
                 repository.Statistics.CreateStatistics(statistics);
                 repository.Save();
 
                 Owners owner = new Owners();
-                owner.UserId = farmData.UserId;
+                owner.UserId = userClaims.Id;
                 owner.FarmId = farmForStatistics.Id;
                 repository.Owners.AddFarmOwner(owner);
                 repository.Save();

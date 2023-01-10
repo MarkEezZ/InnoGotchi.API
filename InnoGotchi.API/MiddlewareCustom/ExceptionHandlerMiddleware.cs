@@ -1,21 +1,13 @@
-﻿using InnoGotchi.API.Contracts;
-using Microsoft.AspNetCore.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InnoGotchi.API.Entities.ErrorModel
 {
-    public class CustomExceptionHandlerMiddleware
+    public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public CustomExceptionHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }

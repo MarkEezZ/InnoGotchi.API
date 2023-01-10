@@ -2,12 +2,14 @@
 using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/mouths")]
+    [Route("innogotchi/mouths")]
     [ApiController]
+    [Authorize]
     public class MouthesController: ControllerBase
     {
         private readonly IRepositoryManager repository;
@@ -20,7 +22,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMouths()
+        public IActionResult GetAllMouths()
         {
             var mouth = repository.Mouth.GetAllMouthes(trackChanges: false);
             if (mouth != null)
@@ -31,7 +33,8 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateMouth([FromBody]BodyPartDto mouthToCreate)
+        [Authorize(Policy = "Admin")]
+        public IActionResult CreateMouth([FromBody] BodyPartDto mouthToCreate)
         {
             var sameMouth = repository.Mouth.GetMouthByName(mouthToCreate.Name, trackChanges: false);
             if (sameMouth == null)
@@ -40,13 +43,14 @@ namespace InnoGotchi.API.Controllers
                 repository.Mouth.CreateMouth(mouth);
                 repository.Save();
 
-                return Ok("Mouth was successfuly added.");
+                return Ok("Mouth was successfuly created.");
             }
             return BadRequest($"Mouth with name \"{mouthToCreate.Name}\" already exists.");
         }
 
         [HttpDelete]
-        public IActionResult DeleteMouth([FromBody]BodyPartDto mouthToDelete)
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteMouth([FromBody] BodyPartDto mouthToDelete)
         {
             var mouth = repository.Mouth.GetMouthByName(mouthToDelete.Name, trackChanges: false);
             if (mouth != null)
