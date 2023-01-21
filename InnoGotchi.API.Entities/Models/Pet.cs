@@ -25,22 +25,20 @@ namespace InnoGotchi.API.Entities.Models
         public DateTime LastDrinkTime { get; set; }
         public DateTime LastHealthTime { get; set; }
         public DateTime LastMoodTime { get; set; }
+        public int positionX { get; set; }
+        public int positionY { get; set; }
 
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }
 
-
         [ForeignKey(nameof(Eyes))]
         public int EyesId { get; set; }
-
 
         [ForeignKey(nameof(Nose))]
         public int? NoseId { get; set; }
 
-
         [ForeignKey(nameof(Mouth))]
         public int MouthId { get; set; }
-
 
         [ForeignKey(nameof(Farm))]
         public int FarmId { get; set; }

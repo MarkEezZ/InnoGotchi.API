@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InnoGotchi.API.Contracts;
 using InnoGotchi.API.Entities.DataTransferObjects;
 using InnoGotchi.API.Entities.Models;
 using InnoGotchi.API.Entities.Static;
@@ -7,6 +8,9 @@ namespace InnoGotchi.API
 {
     public class MappingProfile : Profile
     {
+        const int petPositionX = 1136;
+        const int petPositionY = 864;
+
         public MappingProfile()
         {
             CreateMap<UserForRegistrationDto, User>()
@@ -16,12 +20,19 @@ namespace InnoGotchi.API
                 .ForMember(u => u.IsMusic, opt => opt.MapFrom(src => true));
             CreateMap<User, UserInfoWithoutPasswordDto>();
             CreateMap<UserInfoDto, User>();
-            CreateMap<BodyDto, Body>();
-            CreateMap<BodyPartDto, Eyes>();
-            CreateMap<BodyPartDto, Mouth>();
-            CreateMap<BodyPartDto, Nose>();
+            CreateMap<BodyDto, Body>().ReverseMap();
+            CreateMap<BodyPartDto, Eyes>().ReverseMap();
+            CreateMap<BodyPartDto, Mouth>().ReverseMap();
+            CreateMap<BodyPartDto, Nose>().ReverseMap();
             CreateMap<PetDto, Pet>()
-                .ForMember(p => p.Age, age => age.MapFrom(src => 0));
+                .ForMember(p => p.Age, age => age.MapFrom(src => 0))
+                .ForMember(p => p.TimeOfCreating, time => time.MapFrom(src => DateTime.Now))
+                .ForMember(p => p.LastEatTime, time => time.MapFrom(src => DateTime.Now))
+                .ForMember(p => p.LastDrinkTime, time => time.MapFrom(src => DateTime.Now))
+                .ForMember(p => p.LastHealthTime, time => time.MapFrom(src => DateTime.Now))
+                .ForMember(p => p.LastMoodTime, time => time.MapFrom(src => DateTime.Now))
+                .ForMember(p => p.positionX, pos => pos.MapFrom(src => petPositionX))
+                .ForMember(p => p.positionY, pos => pos.MapFrom(src => petPositionY));
             CreateMap<Pet, PetToReturnDto>();
             CreateMap<FarmToCreate, Farm>();
             CreateMap<User, GuestInfo>();

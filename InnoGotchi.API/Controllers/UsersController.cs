@@ -94,7 +94,7 @@ namespace InnoGotchi.API.Controllers
         public IActionResult GetUserInfo()
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
-            var user = repository.User.GetUserById(userClaims.Id, trackChanges: false);
+            var user = repository.User.GetUserById(userClaims!.Id, trackChanges: false);
             if (user != null)
             {
                 var userInfo = mapper.Map<UserInfoWithoutPasswordDto>(user);
@@ -108,7 +108,7 @@ namespace InnoGotchi.API.Controllers
         public IActionResult ChangeUserInfo([FromBody] UserInfoDto userInfo)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
-            var user = repository.User.GetUserById(userClaims.Id, trackChanges: false);
+            var user = repository.User.GetUserById(userClaims!.Id, trackChanges: false);
 
             if (userInfo.Password != null && userInfo.NewPassword != null)
             {
@@ -151,7 +151,7 @@ namespace InnoGotchi.API.Controllers
         public IActionResult DeleteUser()
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
-            var userToDelete = repository.User.GetUserById(userClaims.Id, trackChanges: false);
+            var userToDelete = repository.User.GetUserById(userClaims!.Id, trackChanges: false);
 
             Owners ownerRecord = repository.Owners.GetOwnFarmByUserId(userToDelete.Id, trackChanges: false);
             if (ownerRecord != null)
@@ -193,8 +193,8 @@ namespace InnoGotchi.API.Controllers
 
                 if (user.PasswordHash == passwordHash)
                 {
-                    var token = createToken(user);
-                    return Ok(token);
+                    createToken(user);
+                    return Ok("Authorized.");
                 }
                 return BadRequest("Invalid password.");                
             }

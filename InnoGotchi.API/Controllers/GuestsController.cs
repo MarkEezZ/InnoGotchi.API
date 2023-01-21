@@ -27,10 +27,10 @@ namespace InnoGotchi.API.Controllers
         public IActionResult GetAllFarmGuests([FromRoute] string farmName)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
-                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var guestsRecords = repository.Guests.GetGuestsByFarmId(farm.Id, trackChanges: false);
                 if (guestsRecords != null)
                 {
@@ -45,17 +45,17 @@ namespace InnoGotchi.API.Controllers
                 }
                 return Ok();
             }
-            return Forbid("You have no rights to get someone else's farm guests.");
+            return BadRequest("You have no rights to get someone else's farm guests.");
         }
 
         [HttpPost("invite")]
         public IActionResult InviteGuest([FromRoute] string farmName, [FromBody] GuestInfo userInfo)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
-                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var user = repository.User.GetUserByLogin(userInfo.Login, trackChanges: false);
                 var guestRecord = repository.Guests.GetGuestByUserAndFarm(user.Id, farm.Id, trackChanges: false);
 
@@ -72,17 +72,17 @@ namespace InnoGotchi.API.Controllers
                 }
                 return BadRequest("This guest already invited on the farm.");
             }
-            return Forbid("You have no rights to invite guests to someone else's farm.");
+            return BadRequest("You have no rights to invite guests to someone else's farm.");
         }
 
         [HttpDelete("delete")]
         public IActionResult DeleteGuest([FromRoute] string farmName, [FromBody] GuestInfo guestInfo)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
-                var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                 var guest = repository.User.GetUserByLogin(guestInfo.Login, trackChanges: false);
                 if (guest != null)
                 {
@@ -94,7 +94,7 @@ namespace InnoGotchi.API.Controllers
                 }
                 return BadRequest($"This user is not a guest of the farm \"{farm.Name}\".");
             }
-            return Forbid("You have no rights to invite guests to someone else's farm.");
+            return BadRequest("You have no rights to invite guests to someone else's farm.");
         }
 
 
@@ -102,13 +102,13 @@ namespace InnoGotchi.API.Controllers
         public IActionResult GetAllUsersToInvite([FromRoute] string farmName)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
                 var users = repository.User.GetAllUsers(trackChanges: false);
                 if (users != null)
                 {
-                    var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
                     var usersToCalc = users.ToList();
                     var farmGuestsRecords = repository.Guests.GetGuestsByFarmId(farm.Id, trackChanges: false).ToList();
                     var farmOwnerRecord = repository.Owners.GetUserByOwnFarmId(farm.Id, trackChanges: false);
@@ -118,7 +118,7 @@ namespace InnoGotchi.API.Controllers
                 }
                 return Ok();
             }
-            return Forbid("You have no rights to try invite guests to someone else's farm.");
+            return BadRequest("You have no rights to try invite guests to someone else's farm.");
         }
 
 

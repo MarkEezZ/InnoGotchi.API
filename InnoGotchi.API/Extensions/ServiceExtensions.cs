@@ -16,7 +16,7 @@ namespace InnoGotchi.API.Extensions
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
-                builder.WithOrigins("https://localhost:3000") // путь к нашему SPA клиенту
+                builder.WithOrigins("http://localhost:3000") // путь к нашему SPA клиенту
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .AllowAnyHeader());

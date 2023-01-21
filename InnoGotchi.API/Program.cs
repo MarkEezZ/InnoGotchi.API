@@ -1,18 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using InnoGotchi.API;
-using InnoGotchi.API.Contracts;
-using InnoGotchi.API.Entities.ErrorModel;
 using InnoGotchi.API.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using NLog;
-using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
@@ -57,6 +49,8 @@ app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors("CorsPolicy");
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
@@ -75,7 +69,10 @@ app.UseJwtAuthMiddleware();
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => 
+{ 
+    endpoints.MapControllers(); 
+});
 
 app.Run();
 

@@ -28,9 +28,32 @@ namespace InnoGotchi.API.Controllers
         {
             var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
             var pets = repository.Pet.GetAllFarmPets(farm.Id, trackChanges: false);
+
             if (pets != null)
             {
-                return Ok(pets);
+                List<PetToReturnDto> petsToReturn = new List<PetToReturnDto>();
+                foreach (Pet pet in pets)
+                {
+                    PetToReturnDto petToReturn = mapper.Map<PetToReturnDto>(pet);
+
+                    Body body = repository.Body.GetBodyById(pet.BodyId, trackChanges: false);
+                    petToReturn.Body = mapper.Map<BodyDto>(body);
+
+                    Eyes eyes = repository.Eyes.GetEyesById(pet.EyesId, trackChanges: false);
+                    petToReturn.Eyes = mapper.Map<BodyPartDto>(eyes);
+
+                    if (pet.NoseId != null)
+                    {
+                        Nose nose = repository.Nose.GetNoseById((int)pet.NoseId, trackChanges: false);
+                        petToReturn.Nose = mapper.Map<BodyPartDto>(nose);
+                    }
+
+                    Mouth mouth = repository.Mouth.GetMouthById(pet.MouthId, trackChanges: false);
+                    petToReturn.Mouth = mapper.Map<BodyPartDto>(mouth);
+
+                    petsToReturn.Add(petToReturn);
+                }
+                return Ok(petsToReturn);
             }
             return Ok();
         }
@@ -42,7 +65,24 @@ namespace InnoGotchi.API.Controllers
             var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
             if (pet != null)
             {
-                return Ok(pet);
+                PetToReturnDto petToReturn = mapper.Map<PetToReturnDto>(pet);
+
+                Body body = repository.Body.GetBodyById(pet.BodyId, trackChanges: false);
+                petToReturn.Body = mapper.Map<BodyDto>(body);
+
+                Eyes eyes = repository.Eyes.GetEyesById(pet.EyesId, trackChanges: false);
+                petToReturn.Eyes = mapper.Map<BodyPartDto>(eyes);
+
+                if (pet.NoseId != null)
+                {
+                    Nose nose = repository.Nose.GetNoseById((int)pet.NoseId, trackChanges: false);
+                    petToReturn.Nose = mapper.Map<BodyPartDto>(nose);
+                }
+
+                Mouth mouth = repository.Mouth.GetMouthById(pet.MouthId, trackChanges: false);
+                petToReturn.Mouth = mapper.Map<BodyPartDto>(mouth);
+
+                return Ok(petToReturn);
             }
             return NotFound($"Pet with name \"{petName}\" is not found.");
         }
@@ -107,55 +147,72 @@ namespace InnoGotchi.API.Controllers
             return NotFound($"Pet with name \"{petName}\" is not found.");
         }
 
+        [HttpPatch("{petName}/moved")]
+        [Authorize]
+        public IActionResult ChangeCoordinates([FromRoute] string petName, [FromBody] CoordinatesDto coordinates)
+        {
+            var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+            if (pet != null)
+            {
+                pet.positionX = coordinates.positionX;
+                pet.positionY = coordinates.positionY;
+                repository.Pet.UpdatePet(pet);
+                repository.Save();
+
+                return Ok();
+            }
+            return NotFound($"Pet with name \"{petName}\" is not found.");
+        }
+
         [HttpPost("constructor")]
         [Authorize]
         public IActionResult CreatePet([FromRoute] string farmName, [FromBody] PetDto petData)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
                 var samePet = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
                 if (samePet == null)
                 {
-                    var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
-
                     Pet pet = mapper.Map<Pet>(petData);
                     DateTime now = DateTime.Now;
 
+                    pet.TimeOfCreating = now;
                     pet.LastDrinkTime = now;
                     pet.LastEatTime = now;
                     pet.LastHealthTime = now;
                     pet.LastMoodTime = now;
                     pet.FarmId = farm.Id;
-                    pet.TimeOfCreating = DateTime.Now;
 
                     repository.Pet.CreatePet(pet);
                     repository.Save();
 
                     var petFromDb = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
-                    return CreatedAtRoute("GetPetByName", routeValues: new { petName = petFromDb.Name }, value: petFromDb);
+                    return Ok(petFromDb);
                 }
                 return BadRequest("This name is already taken.");
             }
-            return Forbid("You have no rights to create a pet on someone else's farm");
+            return BadRequest("You have no rights to create a pet on someone else's farm");
         }
 
         [HttpDelete("delete")]
         [Authorize]
-        public IActionResult DeletePet([FromRoute] string farmName, [FromBody] string petName)
+        public IActionResult DeletePet([FromRoute] string farmName, [FromBody] PetToReturnDto petData)
         {
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farmName == userClaims.OwnFarm)
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
             {
-                var pet = repository.Pet.GetPetByName(petName, trackChanges: false);
+                var pet = repository.Pet.GetPetByName(petData.Name, trackChanges: false);
                 repository.Pet.DeletePet(pet);
                 repository.Save();
 
                 return Ok("Pet was successfuly deleted.");
             }
-            return Forbid("You have no rights to delete a pet from someone else's farm.");
+            return BadRequest("You have no rights to delete a pet from someone else's farm.");
         }
     }
 }

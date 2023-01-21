@@ -4,6 +4,6 @@
     {
         public const string ISSUER = "innogotchiApi";
         public const string AUDIENCE = "innogotchiClient";
-        public const int LIFETIME = 5;
+        public const int LIFETIME = 15;
     }
 }
