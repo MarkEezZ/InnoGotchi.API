@@ -4,6 +4,7 @@ using InnoGotchi.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20230126173853_Update-Eyes")]
+    partial class UpdateEyes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -421,9 +423,6 @@ namespace InnoGotchi.API.Migrations
 
                     b.Property<DateTime>("TimeOfCreating")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDead")
-                        .HasColumnType("bit");
 
                     b.Property<int>("positionX")
                         .HasColumnType("int");

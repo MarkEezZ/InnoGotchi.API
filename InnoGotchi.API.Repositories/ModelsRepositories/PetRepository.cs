@@ -30,6 +30,11 @@ namespace InnoGotchi.API.Repositories.ModelsRepositories
             return FindByCondition(p => p.FarmId == farmId, trackChanges).OrderBy(p => p.Age).ToList();
         }
 
+        public IEnumerable<Pet> GetAllPets(bool trackChanges)
+        {
+            return FindAll(trackChanges).ToList();
+        }
+
         public Pet GetPetByName(string petName, bool trackChanges)
         {
             return FindByCondition(p => p.Name == petName, trackChanges).FirstOrDefault();

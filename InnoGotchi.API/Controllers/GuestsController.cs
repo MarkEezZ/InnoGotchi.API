@@ -81,7 +81,7 @@ namespace InnoGotchi.API.Controllers
             UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
             var farm = repository.Farm.GetFarmByFarmName(farmName, trackChanges: false);
 
-            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm))
+            if (farm.Id == Convert.ToInt32(userClaims!.OwnFarm) && farm != null)
             {
                 var guest = repository.User.GetUserByLogin(guestInfo.Login, trackChanges: false);
                 if (guest != null)

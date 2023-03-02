@@ -49,6 +49,12 @@ namespace InnoGotchi.API.Entities.Configuration
                     Id = 6,
                     Name = "One Eye",
                     FileName = "eyes_one.png"
+                },
+                new Eyes
+                {
+                    Id = 7,
+                    Name = "Tired Oval Eyes",
+                    FileName = "eyes_tired_oval.png"
                 }
             );
         }

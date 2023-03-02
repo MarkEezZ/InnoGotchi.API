@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/eyes")]
+    [Route("innogotchi/eyes")]
     [ApiController]
     [Authorize]
     public class EyesController : ControllerBase

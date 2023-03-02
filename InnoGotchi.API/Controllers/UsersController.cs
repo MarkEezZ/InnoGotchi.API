@@ -68,6 +68,17 @@ namespace InnoGotchi.API.Controllers
             return NotFound("User is not found.");
         }
 
+        [HttpGet("isautorized")]
+        public IActionResult checkAutorization()
+        {
+            UserClaims? userClaims = (UserClaims?)HttpContext.Items["User"];
+            if (userClaims != null)
+            {
+                return Ok(true);
+            }
+            return Ok(false);
+        }
+
         [HttpGet]
         [Authorize(Policy = "Admin")]
         public IActionResult GetAllUsers()
@@ -140,7 +151,7 @@ namespace InnoGotchi.API.Controllers
                 HttpContext.Response.Cookies.Append("AspNetCore.Application.Id", "expired",
                 new CookieOptions
                 {
-                    MaxAge = TimeSpan.FromMinutes(-1)
+                    MaxAge = TimeSpan.FromMinutes(0)
                 });
             }
             return Ok("User was successfuly logged out.");
@@ -164,6 +175,28 @@ namespace InnoGotchi.API.Controllers
             repository.Save();
 
             return Ok($"Account was sucsessfuly deleted.");
+        }
+
+        [HttpDelete("deletebyid")]
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteUserById([FromBody] Guid userId)
+        {
+            var userToDelete = repository.User.GetUserById(userId, trackChanges: false);
+            if (userToDelete != null)
+            {
+                Owners ownerRecord = repository.Owners.GetOwnFarmByUserId(userToDelete.Id, trackChanges: false);
+                if (ownerRecord != null)
+                {
+                    var farm = repository.Farm.GetFarmByFarmId(ownerRecord.FarmId, trackChanges: false);
+                    repository.Farm.DeleteFarm(farm);
+                    repository.Owners.RemoveFarmOwner(ownerRecord);
+                }
+                repository.User.DeleteUser(userToDelete);
+                repository.Save();
+
+                return Ok($"Account was sucsessfuly deleted.");
+            }
+            return NotFound($"User with id \"{userId}\" is not found");
         }
 
         [HttpPost("register")]
@@ -194,6 +227,7 @@ namespace InnoGotchi.API.Controllers
                 if (user.PasswordHash == passwordHash)
                 {
                     createToken(user);
+
                     return Ok("Authorized.");
                 }
                 return BadRequest("Invalid password.");                
@@ -245,7 +279,8 @@ namespace InnoGotchi.API.Controllers
             HttpContext.Response.Cookies.Append("AspNetCore.Application.Id", jwtToken,
             new CookieOptions
             {
-                MaxAge = TimeSpan.FromMinutes(AuthOptions.LIFETIME)
+                MaxAge = TimeSpan.FromMinutes(AuthOptions.LIFETIME),
+                Path = "/"
             });
 
             return jwtToken;

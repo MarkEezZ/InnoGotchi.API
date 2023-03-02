@@ -27,6 +27,7 @@ namespace InnoGotchi.API.Entities.Models
         public DateTime LastMoodTime { get; set; }
         public int positionX { get; set; }
         public int positionY { get; set; }
+        public bool isDead { get; set; }
 
         [ForeignKey(nameof(Body))]
         public int BodyId { get; set; }

@@ -95,30 +95,53 @@ namespace InnoGotchi.API.Controllers
 
             if (ownFarm == null)
             {
-                Farm farm = mapper.Map<Farm>(farmData);
-                repository.Farm.CreateFarm(farm);
-                repository.Save();
+                var farmToCheck = repository.Farm.GetFarmByFarmName(farmData.Name, trackChanges: false);
+                if (farmToCheck == null)
+                {
+                    Farm farm = mapper.Map<Farm>(farmData);
+                    repository.Farm.CreateFarm(farm);
+                    repository.Save();
 
-                var farmForStatistics = repository.Farm.GetFarmByFarmName(farmData.Name, trackChanges: false);
+                    var farmForStatistics = repository.Farm.GetFarmByFarmName(farmData.Name, trackChanges: false);
 
-                StatisticsBase baseStatistics = new StatisticsBase();
-                Statistics statistics = mapper.Map<Statistics>(baseStatistics);
-                statistics.FarmId = farmForStatistics.Id;
-                repository.Statistics.CreateStatistics(statistics);
-                repository.Save();
+                    StatisticsBase baseStatistics = new StatisticsBase();
+                    Statistics statistics = mapper.Map<Statistics>(baseStatistics);
+                    statistics.FarmId = farmForStatistics.Id;
+                    repository.Statistics.CreateStatistics(statistics);
+                    repository.Save();
 
-                Owners owner = new Owners();
-                owner.UserId = userClaims.Id;
-                owner.FarmId = farmForStatistics.Id;
-                repository.Owners.AddFarmOwner(owner);
-                repository.Save();
+                    Owners owner = new Owners();
+                    owner.UserId = userClaims.Id;
+                    owner.FarmId = farmForStatistics.Id;
+                    repository.Owners.AddFarmOwner(owner);
+                    repository.Save();
 
-                User user = repository.User.GetUserById(userClaims!.Id, trackChanges: false);
-                createToken(user);
+                    User user = repository.User.GetUserById(userClaims!.Id, trackChanges: false);
+                    createToken(user);
 
-                return Ok($"Farm \"{farmData.Name}\" was successfuly created.");
+                    FarmRecordDto recordToReturn = new FarmRecordDto();
+                    recordToReturn.FarmName = farmData.Name;
+                    recordToReturn.FarmOwnerLogin = userClaims.Login;
+
+                    return Ok(recordToReturn);
+                }
+                return BadRequest($"Farm with name \"{farmData.Name}\" already exists.");
             }
             return BadRequest("User already has a farm.");
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = "Admin")]
+        public IActionResult DeleteFarmById([FromBody] int farmId)
+        {
+            var farm = repository.Farm.GetFarmByFarmId(farmId, trackChanges: false);
+            if (farm != null)
+            {
+                repository.Farm.DeleteFarm(farm);
+                repository.Save();
+                return Ok($"Farm with id \"{farmId}\" was sucsessfuly deleted");
+            }
+            return NotFound($"Farm with id \"{farmId}\" was not found");
         }
 
         private string createToken(User user)
@@ -165,7 +188,8 @@ namespace InnoGotchi.API.Controllers
             HttpContext.Response.Cookies.Append("AspNetCore.Application.Id", jwtToken,
             new CookieOptions
             {
-                MaxAge = TimeSpan.FromMinutes(AuthOptions.LIFETIME)
+                MaxAge = TimeSpan.FromMinutes(AuthOptions.LIFETIME),
+                Path = "/"
             });
 
             return jwtToken;

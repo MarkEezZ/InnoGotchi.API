@@ -9,6 +9,7 @@ namespace InnoGotchi.API.Entities.DataTransferObjects
 {
     public class PetToReturnDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
         public BodyDto Body { get; set; }
@@ -22,5 +23,6 @@ namespace InnoGotchi.API.Entities.DataTransferObjects
         public DateTime LastMoodTime { get; set; }
         public int positionX { get; set; }
         public int positionY { get; set; }
+        public bool isDead { get; set; }
     }
 }

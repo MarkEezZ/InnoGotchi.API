@@ -32,7 +32,8 @@ namespace InnoGotchi.API
                 .ForMember(p => p.LastHealthTime, time => time.MapFrom(src => DateTime.Now))
                 .ForMember(p => p.LastMoodTime, time => time.MapFrom(src => DateTime.Now))
                 .ForMember(p => p.positionX, pos => pos.MapFrom(src => petPositionX))
-                .ForMember(p => p.positionY, pos => pos.MapFrom(src => petPositionY));
+                .ForMember(p => p.positionY, pos => pos.MapFrom(src => petPositionY))
+                .ForMember(p => p.isDead, pos => pos.MapFrom(src => false));
             CreateMap<Pet, PetToReturnDto>();
             CreateMap<FarmToCreate, Farm>();
             CreateMap<User, GuestInfo>();
